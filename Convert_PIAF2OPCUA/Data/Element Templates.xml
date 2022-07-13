@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AF xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="OSIsoft.AF.xsd" SchemaVersion="2.0" SoftwareVersion="2.10.9.593" ExportMode="NoUniqueID" PISystem="DESKTOP-GV" Database="GV_001" Description="" Created="2022-06-20T17:57:56.7809757Z" id="f675807a-a9f0-4130-8671-29f3f8418131" ParentKey="f675807a-a9f0-4130-8671-29f3f8418131" ExportedObject="NamedCollectionList" ExportedType="AFNamedCollectionList`1" Identity="ElementTemplate">
+  <AFElementTemplate>
+    <Name>Refridgerator</Name>
+    <Description>a basic refridgerator</Description>
+    <BaseTemplateOnly>false</BaseTemplateOnly>
+    <Type>None</Type>
+    <InstanceType>Element</InstanceType>
+    <AllowElementToExtend>false</AllowElementToExtend>
+    <AFAttributeTemplate>
+      <Name>DeltaT</Name>
+      <Description>temperature difference between inside and outside in deg F</Description>
+      <DefaultUOM>°F</DefaultUOM>
+      <Type>Double</Type>
+      <Value type="Double">0</Value>
+      <DataReference>Formula</DataReference>
+      <ConfigString>A=Temp_Inside;B=Temp_Outside;[B-A]</ConfigString>
+    </AFAttributeTemplate>
+    <AFAttributeTemplate>
+      <Name>Depth</Name>
+      <Description>depth in inch</Description>
+      <DefaultUOM>in</DefaultUOM>
+      <Type>Double</Type>
+      <Value type="Double">0</Value>
+    </AFAttributeTemplate>
+    <AFAttributeTemplate>
+      <Name>Height</Name>
+      <Description>height in inch</Description>
+      <DefaultUOM>in</DefaultUOM>
+      <Type>Double</Type>
+      <Value type="Double">0</Value>
+    </AFAttributeTemplate>
+    <AFAttributeTemplate>
+      <Name>Make</Name>
+      <Type>String</Type>
+      <Value type="String"></Value>
+    </AFAttributeTemplate>
+    <AFAttributeTemplate>
+      <Name>Model</Name>
+      <Type>String</Type>
+      <Value type="String"></Value>
+    </AFAttributeTemplate>
+    <AFAttributeTemplate>
+      <Name>Power_Draw</Name>
+      <Description>power draw metered in watt</Description>
+      <DefaultUOM>W</DefaultUOM>
+      <Type>Double</Type>
+      <Value type="Double">0</Value>
+      <DataReference>PI Point</DataReference>
+    </AFAttributeTemplate>
+    <AFAttributeTemplate>
+      <Name>Serial_Number</Name>
+      <Type>String</Type>
+      <Value type="String"></Value>
+    </AFAttributeTemplate>
+    <AFAttributeTemplate>
+      <Name>Temp_Inside</Name>
+      <Description>inside temperature in deg F</Description>
+      <DefaultUOM>°F</DefaultUOM>
+      <Type>Double</Type>
+      <Value type="Double">0</Value>
+      <DataReference>PI Point</DataReference>
+    </AFAttributeTemplate>
+    <AFAttributeTemplate>
+      <Name>Temp_Outside</Name>
+      <Description>outside temperature in deg F</Description>
+      <DefaultUOM>°F</DefaultUOM>
+      <Type>Double</Type>
+      <Value type="Double">0</Value>
+      <DataReference>PI Point</DataReference>
+    </AFAttributeTemplate>
+    <AFAttributeTemplate>
+      <Name>Weight</Name>
+      <Description>weight of unit in pounds</Description>
+      <DefaultUOM>lb</DefaultUOM>
+      <Type>Double</Type>
+      <Value type="Double">0</Value>
+    </AFAttributeTemplate>
+    <AFAttributeTemplate>
+      <Name>Width</Name>
+      <Description>width in inch</Description>
+      <DefaultUOM>in</DefaultUOM>
+      <Type>Double</Type>
+      <Value type="Double">0</Value>
+    </AFAttributeTemplate>
+  </AFElementTemplate>
+  <AFElementTemplate>
+    <Name>Refridgerator with Water Dispenser</Name>
+    <Description>a refridgerator with a water dispenser</Description>
+    <BaseTemplateOnly>false</BaseTemplateOnly>
+    <BaseTemplate>Refridgerator</BaseTemplate>
+    <Type>None</Type>
+    <InstanceType>Element</InstanceType>
+    <AllowElementToExtend>false</AllowElementToExtend>
+    <AFAttributeTemplate>
+      <Name>Water_Dispenser_Is_Running</Name>
+      <Description>indicates if the water dispenser is running</Description>
+      <Type>Boolean</Type>
+      <Value type="Boolean">False</Value>
+      <DataReference>PI Point</DataReference>
+    </AFAttributeTemplate>
+    <AFAttributeTemplate>
+      <Name>Water_Draw</Name>
+      <Description>indicates the fixed water draw speed in gal/min</Description>
+      <DefaultUOM>US gal/min</DefaultUOM>
+      <Type>Double</Type>
+      <Value type="Double">1</Value>
+    </AFAttributeTemplate>
+  </AFElementTemplate>
+</AF>

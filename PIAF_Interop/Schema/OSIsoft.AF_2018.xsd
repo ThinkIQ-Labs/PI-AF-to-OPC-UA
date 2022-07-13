@@ -1,0 +1,1613 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--W3C Schema -->
+<!-- Copyright (c) 2008-2018 OSIsoft, LLC. All rights reserved. -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:documentation xml:language="en">
+      OSIsoft.AF Schema, Copyright (c) 2008-2009 OSIsoft, LLC. All rights reserved.
+    </xs:documentation>
+  </xs:annotation>
+  <xs:element name="AF">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="SecurityAccessControl" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlContact" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlDatabase" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlNotificationContactTemplate" type="xs:string" minOccurs="0"/>
+        <xs:choice minOccurs="0" maxOccurs ="unbounded">      
+          <xs:element ref="AFAdjustment"/>
+          <xs:element ref="AFAnalysis"/>
+          <xs:element ref="AFAnalysisCategory"/>
+          <xs:element ref="AFAnalysisRule"/>
+          <xs:element ref="AFAnalysisTemplate"/>
+          <xs:element ref="AFAttribute"/>
+          <xs:element ref="AFAttributeCategory"/>
+          <xs:element ref="AFAttributeCategoryRef"/>
+          <xs:element ref="AFAttributeTemplate"/>
+          <xs:element ref="AFCase"/>
+          <xs:element ref="AFConnection"/>
+          <xs:element ref="AFContact"/>
+          <xs:element ref="AFContactRef"/>
+          <xs:element ref="AFDatabase"/>
+          <xs:element ref="AFDeliveryFormat"/>
+          <xs:element ref="AFElement"/>
+          <xs:element ref="AFElementCategory"/>
+          <xs:element ref="AFElementCategoryRef"/>
+          <xs:element ref="AFElementRef"/>
+          <xs:element ref="AFElementTemplate"/>
+          <xs:element ref="AFEnumerationSet"/>
+          <xs:element ref="AFEnumerationValue"/>
+          <xs:element ref="AFEventFrame"/>
+          <xs:element ref="AFLayer"/>
+          <xs:element ref="AFModel"/>
+          <xs:element ref="AFModelRef"/>
+          <xs:element ref="AFModelAnalysis"/>
+          <xs:element ref="AFNotification"/>
+          <xs:element ref="AFNotificationContact"/>
+          <xs:element ref="AFNotificationContactRef"/>
+          <xs:element ref="AFNotificationContactTemplate"/>
+          <xs:element ref="AFNotificationContactTemplateRef"/>	
+          <xs:element ref="AFNotificationContent"/>
+          <xs:element ref="AFNotificationRule"/>
+          <xs:element ref="AFNotificationRuleCategory"/>
+          <xs:element ref="AFNotificationRuleTemplate"/>
+          <xs:element ref="AFNotificationTemplate"/>
+          <xs:element ref="AFPlugIn"/>
+          <xs:element ref="AFPort"/>
+          <xs:element ref="AFReferenceType"/>
+          <xs:element ref="AFReferenceTypeCategory"/>
+          <xs:element ref="AFResult"/>
+          <xs:element ref="AFSecurityIdentity"/>
+          <xs:element ref="AFSecurityMapping"/>
+          <xs:element ref="AFTable"/>
+          <xs:element ref="AFTableCategory"/>
+          <xs:element ref="AFTableConnection"/>
+          <xs:element ref="AFTimeRule"/>
+          <xs:element ref="AFTransfer"/>
+          <xs:element ref="PISystem"/>
+          <xs:element ref="UOM"/>
+          <xs:element ref="UOMBaseClass"/>
+          <xs:element ref="UOMClass"/>
+          <xs:element ref="UOMDatabase"/>
+          <xs:element ref="UOMGroup"/>
+        </xs:choice>
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:string" use="optional"/>
+      <xs:attribute name="SoftwareVersion" type="xs:string" use="optional"/>
+      <xs:attribute name="SchemaVersion" type="xs:string" use="optional"/>
+      <xs:attribute name="ParentKey" type="xs:string" use="optional"/>
+      <xs:attribute name="PISystem" type="xs:string" use="required"/>
+      <xs:attribute name="PIPersist" type="xs:string" use="optional"/>
+      <xs:attribute name="Identity" type="xs:string" use="required"/>
+      <xs:attribute name="ExportedType" type="xs:string" use="required"/>
+      <xs:attribute name="ExportedObject" type="xs:string" use="optional"/>
+      <xs:attribute name="ExportMode" type="xs:string" use="optional"/>
+      <xs:attribute name="Description" type="xs:string" use="optional"/>
+      <xs:attribute name="Database" type="xs:string" use="optional"/>
+      <xs:attribute name="Created" type="xs:string" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:group name="AFBaseElement">
+    <!-- AllReferences adds 
+        AFElementTemplate in Template
+        AFElementCategories referenced
+        AFEnumerationSets referenced in non templated attributes-->
+    <xs:sequence>
+      <xs:element ref="id" minOccurs="0"/>
+      <xs:element ref="Name" minOccurs="0"/>
+      <xs:element ref="Description" minOccurs="0"/>
+      <xs:element name="Template" type="xs:string" minOccurs="0"/>
+      <xs:element name="IsAnnotated" type="xs:boolean" minOccurs="0"/>
+      <xs:element name="DefaultAttribute" type="xs:string" minOccurs="0"/>
+      <xs:element name="DefaultInputPort" type="xs:string" minOccurs="0"/>
+      <xs:element name="DefaultOutputPort" type="xs:string" minOccurs="0"/>
+      <xs:element name="DefaultUndirectedPort" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:group name="AFBaseElementChildren">
+    <xs:sequence>
+      <xs:element ref="AFExtendedProperty" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="AFElementCategoryRef" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="AFAttribute" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="AFPort" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="AFAnnotation" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:group name="AFNotificationRuleChildren">
+    <xs:sequence>
+      <xs:element ref="AFNotificationRuleCategoryRef" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="AFDeliveryFormat" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element ref="AFNotificationRuleSubscriber" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:group name="AFCategory">
+    <!-- AllReferences adds AFSecurityIdentities from SecurityAccessControl if Security is also exported -->
+    <xs:sequence>
+      <xs:element ref="id" minOccurs="0"/>
+      <xs:element ref="Name"/>
+      <xs:element ref="Description" minOccurs="0"/>
+      <xs:element name="SecurityAccessControl" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:group name="AFValue">
+    <xs:sequence>
+      <xs:element name="Status" type="xs:string" minOccurs="0"/>
+      <xs:element name="Timestamp" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="UOM" type="xs:string" minOccurs="0"/>
+      <xs:element ref="Value" minOccurs="0"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:group name="AFVersion">
+    <xs:sequence>
+      <xs:element name="VersionID" type="xs:string" minOccurs="0"/>
+      <xs:element name="Modifier" type="xs:string" minOccurs="0"/>
+      <xs:element name="Comment" type="xs:string" minOccurs="0"/>
+      <xs:element name="EffectiveDate" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="ObsoleteDate" type="xs:dateTime" minOccurs="0"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:attribute name="id" type="xs:string"/>
+  <xs:attribute name="operation">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="delete"/>
+        <xs:enumeration value="remove"/>
+        <xs:enumeration value="createconfig"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:attribute>
+  <xs:attribute name="ReferenceType" type="xs:string"/>
+  <xs:attribute name="UOMGroup" type="xs:string"/>
+  <xs:element name="id" type="xs:string"/>
+  <xs:element name="Name" type="xs:string"/>
+  <xs:element name="Description" type="xs:string"/>
+  <xs:element name="SecurityAccessControl" type="xs:string"/>
+  <xs:element name="Value">
+    <xs:complexType mixed="true">
+      <xs:choice minOccurs="0">
+        <xs:element ref="AFFile" minOccurs = "0"/>
+        <xs:element name="Item" minOccurs ="0" maxOccurs ="unbounded"/>
+      </xs:choice>
+      <xs:attribute name="default" type="xs:boolean" use="optional"/>
+      <xs:attribute name="type" type="xs:string" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Target">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs ="unbounded"> 
+        <xs:element ref="AFElementRef"/>
+        <xs:element ref="AFModelRef"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ContactType">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="Individual"/>
+        <xs:enumeration value="Group"/>
+        <xs:enumeration value="Escalation"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="Priority">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="High"/>
+        <xs:enumeration value="AboveNormal"/>
+        <xs:enumeration value="Normal"/>
+        <xs:enumeration value="BelowNormal"/>
+        <xs:enumeration value="Low"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="AutoCreate">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="DoNotCreate"/>
+        <xs:enumeration value="AutoCreate"/>
+        <xs:enumeration value="AutoCreateAndStart"/>
+        <xs:enumeration value="Prompt"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="Status">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="NotReady"/>
+        <xs:enumeration value="Disabled"/>
+        <xs:enumeration value="Enabled"/>
+        <xs:enumeration value="Error"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="AFAdjustment">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Creator" type="xs:string" minOccurs="0"/>
+        <xs:element name="CreationTime" type="xs:dateTime" minOccurs="0"/>
+        <xs:element name="Comment" type="xs:string" minOccurs="0"/>
+        <xs:element name="PreviousValue" minOccurs="0">
+          <xs:complexType mixed="true">
+            <xs:choice minOccurs="0">
+              <xs:element ref="AFFile" minOccurs = "0"/>
+              <xs:element name="Item" minOccurs ="0" maxOccurs ="unbounded"/>
+            </xs:choice>
+            <xs:attribute name="type" type="xs:string" use="optional"/>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="AdjustedValue" minOccurs="0">
+          <xs:complexType mixed="true">
+            <xs:choice minOccurs="0">
+              <xs:element ref="AFFile" minOccurs = "0"/>
+              <xs:element name="Item" minOccurs ="0" maxOccurs ="unbounded"/>
+            </xs:choice>
+            <xs:attribute name="type" type="xs:string" use="optional"/>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element> 
+  <xs:element name="AFAnalysis">
+    <!-- AllReferences includes referenced
+        AFAnalysisCategories
+        AFAnalysisTemplate in Template
+        AFElementTemplate in CaseTemplate
+        AFElement in Target 
+        AFSecurityIdentities from SecurityAccessControl if Security is also exported -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element ref="Description" minOccurs="0"/>
+        <xs:element name="Template" type="xs:string" minOccurs="0"/>
+        <xs:element name="CaseTemplate" type="xs:string" minOccurs="0"/>
+        <xs:element name="OutputTime" type="xs:string" minOccurs="0"/>
+        <xs:element ref="Status" minOccurs="0"/>
+        <xs:element name="PublishResults" type="xs:boolean" minOccurs="0"/>
+        <xs:element ref="Priority" minOccurs="0"/>
+        <xs:element name="MaxQueueSize" type="xs:integer" minOccurs="0"/>
+        <xs:element name="GroupID" type="xs:short" minOccurs="0"/>
+        <xs:element ref="Target" minOccurs="0"/>
+        <xs:element ref="AFExtendedProperty" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="AFAnalysisCategoryRef" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="AFAnalysisRule" minOccurs="0"/>
+        <xs:element ref="AFTimeRule" minOccurs="0"/>
+        <xs:element ref="AFCase" minOccurs="0" maxOccurs ="unbounded"/>
+        <xs:element name="SecurityAccessControl" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFAnalysisCategory">
+    <xs:complexType>
+      <xs:group ref="AFCategory"/>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFAnalysisCategoryRef">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute ref="id" use="optional"/>
+          <xs:attribute ref="operation" use="optional"/>          
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFAnalysisRule">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="AFPlugIn" minOccurs ="0">
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="xs:string">
+                <xs:attribute ref="id" use="optional"/>
+                <xs:attribute ref="operation" use="optional"/>
+              </xs:extension>
+            </xs:simpleContent>            
+          </xs:complexType>
+        </xs:element>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element name="ConfigString" type="xs:string" minOccurs="0"/>
+        <xs:element name="VariableMapping" type="xs:string" minOccurs="0"/>
+        <xs:element ref="AFAnalysisRule" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFAnalysisTemplate">
+    <!-- AllReferences includes referenced
+        AFAnalysisCategories
+        AFElementTemplate in CaseTemplate
+        AFElement in Target 
+        AFSecurityIdentities from SecurityAccessControl if Security is also exported -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element ref="Description" minOccurs="0"/>
+        <xs:element name="OutputTime" type="xs:string" minOccurs="0"/>
+        <xs:element name="GroupID" type="xs:short" minOccurs="0"/>
+        <xs:element name="CaseTemplate" type="xs:string" minOccurs="0"/>
+        <xs:element name="Target" type="xs:string" minOccurs="0"/>
+        <xs:element name="CreateEnabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="AFExtendedProperty" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="AFAnalysisCategoryRef" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="AFAnalysisRule" minOccurs="0"/>
+        <xs:element ref="AFTimeRule" minOccurs="0"/>
+        <xs:element name="SecurityAccessControl" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFAnnotation">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name" minOccurs="0"/>
+        <xs:element name="Value" type="xs:string" minOccurs="0"/>
+        <xs:element name="Description" type="xs:string" minOccurs="0"/>
+        <xs:element name="Creator" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="CreationDate" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="Modifier" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="ModifyDate" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="Attachment" minOccurs="0">
+          <xs:complexType>
+            <xs:choice minOccurs="0">
+              <xs:element ref="AFFile"/>
+            </xs:choice>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFAttribute">
+    <!-- AllReferences includes referenced AFEnumerationSets in ValueTypeQualifier when not from template-->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element ref="Description" minOccurs="0"/>
+        <xs:element name="IsHidden" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="IsManualDataEntry" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="IsConfigurationItem" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="IsExcluded" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="Trait" type="xs:string" minOccurs="0"/>
+        <xs:element name="DefaultUOM" type="xs:string" minOccurs="0"/>
+        <xs:element name="DisplayDigits" type="xs:integer" minOccurs="0"/>
+        <xs:element name="Type" type="xs:string" minOccurs="0"/>
+        <xs:element name="TypeQualifier" minOccurs="0">
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="xs:string">
+                <xs:attribute name="type" type="xs:string" use="optional"/>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:group ref="AFValue"/>
+        <xs:element name="DataReference" minOccurs="0">
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="xs:string">
+                <xs:attribute ref="id" use="optional"/>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+    <xs:element name="ConfigString" type="xs:string" minOccurs="0"/>
+        <xs:element ref="AFAttributeCategoryRef" minOccurs="0"  maxOccurs="unbounded"/>
+        <xs:element ref="AFAttribute" minOccurs="0"  maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFAttributeCategory">
+    <xs:complexType>
+      <xs:group ref="AFCategory"/>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFAttributeCategoryRef">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute ref="id" use="optional"/>
+          <xs:attribute ref="operation" use="optional"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFAttributeTemplate">
+    <!-- AllReferences includes referenced AFEnumerationSets in ValueTypeQualifier-->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element ref="Description" minOccurs="0"/>
+        <xs:element name="IsHidden" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="IsManualDataEntry" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="IsConfigurationItem" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="IsExcluded" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="IsIndexed" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="Trait" type="xs:string" minOccurs="0"/>
+        <xs:element name="DefaultUOM" type="xs:string" minOccurs="0"/>
+        <xs:element name="DisplayDigits" type="xs:integer" minOccurs="0"/>
+        <xs:element name="Type" type="xs:string" minOccurs="0"/>
+        <xs:element name="TypeQualifier" minOccurs="0">
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="xs:string">
+                <xs:attribute name="type" type="xs:string" use="optional"/>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element ref="Value" minOccurs="0"/>
+        <xs:element name="DataReference" minOccurs="0">
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="xs:string">
+                <xs:attribute ref="id" use="optional"/>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="ConfigString" type="xs:string" minOccurs="0"/>
+        <xs:element ref="AFAttributeCategoryRef" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="AFAttributeTemplate" minOccurs="0" maxOccurs="unbounded"/>       
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFCase">
+    <!-- AllReferences adds 
+        AFElementTemplate in Template
+        AFElementCategories referenced
+        AFEnumerationSets referenced in non templated attributes
+        All child AFElements
+        All AFConnections (not just those added or removed) -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:group ref="AFBaseElement"/>
+        <xs:element name="IsLocked" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="AreValuesCaptured" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="StartTime" type="xs:dateTime" minOccurs="0"/>
+        <xs:element name="EndTime" type="xs:dateTime" minOccurs="0"/>
+        <xs:element name="PreviousCase" type="xs:string" minOccurs="0"/>
+        <xs:element name="CollectElementsTime" type="xs:dateTime" nillable="true" minOccurs="0"/>
+        <xs:element name="CollectInputsTime" type="xs:dateTime" nillable="true" minOccurs="0"/>
+        <xs:element name="CollectTransfersTime" type="xs:dateTime" nillable="true" minOccurs="0"/>
+        <xs:element name="RunTime" type="xs:dateTime" nillable="true" minOccurs="0"/>
+        <xs:element name="PublishTime" type="xs:dateTime" nillable="true" minOccurs="0"/>
+        <xs:element name="IsPublished" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="CountInputs" type="xs:integer" minOccurs="0"/>
+        <xs:element name="CountInputsBad" type="xs:integer" minOccurs="0"/>
+        <xs:element name="CountOutputs" type="xs:integer" minOccurs="0"/>
+        <xs:element name="CountOutputsBad" type="xs:integer" minOccurs="0"/>      
+        <xs:element ref="Target" minOccurs="0"/>
+        <xs:group ref="AFBaseElementChildren"/>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element ref="AFElement"/>
+          <xs:element ref="AFModel"/>
+          <xs:element ref="AFTransfer"/>
+        </xs:choice>
+        <xs:element ref="AFLayerRef" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element ref="AFElementRef"/>
+          <xs:element ref="AFModelRef"/>
+          <xs:element ref="AFTransferRef"/>
+        </xs:choice>
+        <xs:element ref="AFElementRemovedRef" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="AFConnection" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="AFConnectionRemovedRef" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="AFResult" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFConnection">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element name="Source" type="xs:string" minOccurs="0"/>
+        <xs:element name="SourcePort" type="xs:string" minOccurs="0"/>
+        <xs:element name="Destination" type="xs:string" minOccurs="0"/>
+        <xs:element name="DestinationPort" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFContact">
+    <!-- AllReferences adds AFSecurityIdentities from SecurityAccessControl if Security is also exported -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element name="CanonicalName" type="xs:string"  minOccurs="0"/>
+        <xs:element ref="Description"  minOccurs="0"/>
+        <xs:element name="FromAD" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="ContactType" minOccurs="0">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="User"/>
+              <xs:enumeration value="Group"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="Department" type="xs:string" minOccurs="0"/>
+        <xs:element name="Manager" type="xs:string" minOccurs="0"/>
+        <xs:element name="EMail" type="xs:string" minOccurs="0"/>
+        <xs:element name="BusinessPhone" type="xs:string" minOccurs="0"/>
+        <xs:element name="HomePhone" type="xs:string"  minOccurs="0"/>
+        <xs:element name="MobilePhone" type="xs:string"  minOccurs="0"/>
+        <xs:element name="IPPhone" type="xs:string" minOccurs="0"/>
+        <xs:element name="FaxNumber" type="xs:string" minOccurs="0"/>
+        <xs:element name="PagerNumber" type="xs:string" minOccurs="0"/>
+        <xs:element name="IMAddress" type="xs:string" minOccurs="0"/>
+        <xs:element name="PostalAddress" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControl" type="xs:string" minOccurs="0"/>
+        <xs:element name="PreferredLanguage" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element> 
+  <xs:element name="AFContactRef">
+    <xs:complexType>
+       <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute ref="id" use="optional"/>
+          <xs:attribute ref="operation" use="optional"/>
+          <xs:attribute name="CanonicalName" type="xs:string" use="optional"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFDatabase">
+    <!-- AllReferences adds 
+        UOMDatabase, 
+        AFContacts referenced, 
+        AFNotificationContactTemplates referenced 
+        AFSecurityIdentities if Security is also exported -->  
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element ref="Description" minOccurs="0"/>
+        <xs:element name="SecurityAccessControl" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlAnalysis" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlAnalysisTemplate" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlCategory" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlElement" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlElementTemplate" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlEnumerationSet" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlEventFrame" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlNotification" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlNotificationRule" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlNotificationRuleTemplate" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlReferenceType" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlTable" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlTableConnection" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlTransfer" type="xs:string" minOccurs="0"/>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element ref="AFExtendedProperty"/>
+          <xs:element ref="AFAnalysisCategory"/>
+          <xs:element ref="AFAttributeCategory"/>
+          <xs:element ref="AFElementCategory"/>
+          <xs:element ref="AFReferenceTypeCategory"/>
+          <xs:element ref="AFTableCategory"/>
+          <xs:element ref="AFTableConnection"/>
+          <xs:element ref="AFTable"/>
+          <xs:element ref="AFEnumerationSet"/>
+          <xs:element ref="AFElementTemplate"/>
+          <xs:element ref="AFNotificationTemplate"/>
+          <xs:element ref="AFReferenceType"/>
+          <xs:element ref="AFAnalysisTemplate"/>
+          <xs:element ref="AFElement"/>
+          <xs:element ref="AFModel"/>
+          <xs:element ref="AFElementRef"/>
+          <xs:element ref="AFEventFrame"/>
+          <xs:element ref="AFTransfer"/>
+          <xs:element ref="AFAnalysis"/>
+          <xs:element ref="AFModelAnalysis"/>
+          <xs:element ref="AFNotification"/>
+        </xs:choice>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFElement">
+    <!-- AllReferences adds 
+        AFElementTemplate in Template
+        AFElementCategories referenced
+        AFEnumerationSets referenced in non templated attributes
+        AFReferenceTypes to referenced children       
+        same as above for all child elements 
+        AFSecurityIdentities from SecurityAccessControl if Security is also exported -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:group ref="AFBaseElement"/>
+        <xs:group ref="AFVersion"/>
+        <xs:group ref="AFBaseElementChildren"/>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element ref="AFElement"/>
+          <xs:element ref="AFModel"/>
+          <xs:element ref="AFElementRef"/>
+          <xs:element ref="AFModelRef"/>
+        </xs:choice>
+        <xs:element ref="AFAnalysis" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="AFNotificationRule" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="SecurityAccessControl" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute ref="ReferenceType" use="optional"/>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFElementRef">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute ref="ReferenceType" use="optional"/>
+          <xs:attribute ref="id" use="optional"/>
+          <xs:attribute ref="operation" use="optional"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFElementRemovedRef">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute ref="id" use="optional"/>
+          <xs:attribute ref="operation" use="optional"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFElementCategory">
+    <xs:complexType>
+      <xs:group ref="AFCategory"/>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFElementCategoryRef">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute ref="id" use="optional"/>
+          <xs:attribute ref="operation" use="optional"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFElementTemplate">
+    <!-- AllReferences adds 
+        Base AFElementTemplates
+        AFElementTemplates referenced in AFPort.AllowedElementTemplate
+        AFReferenceTypes which specifically reference this template 
+        AFElementCategories referenced
+        AFEnumerationSets referenced in attribute templates
+        AFSecurityIdentities from SecurityAccessControl if Security is also exported -->    
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element ref="Description" minOccurs="0"/>
+        <xs:element name="BaseTemplateOnly" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="BaseTemplate" minOccurs="0"/>
+        <xs:element name="Type" minOccurs="0">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="Boundary"/>
+              <xs:enumeration value="Flow"/>
+              <xs:enumeration value="Measurement"/>
+              <xs:enumeration value="Node"/>
+              <xs:enumeration value="None"/>
+              <xs:enumeration value="PIPoint"/>
+              <xs:enumeration value="Transfer"/>
+              <xs:enumeration value="Other"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="InstanceType" minOccurs="0">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="Element"/>
+              <xs:enumeration value="EventFrame"/>
+              <xs:enumeration value="Transfer"/>
+              <xs:enumeration value="Model"/>
+              <xs:enumeration value="Notification"/>
+              <xs:enumeration value="Case"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="AllowElementToExtend" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="DefaultAttribute" type="xs:string" minOccurs="0"/>
+        <xs:element name="NamingPattern" type="xs:string" minOccurs="0"/>
+        <xs:element name="DefaultInputPort" type="xs:string" minOccurs="0"/>
+        <xs:element name="DefaultOutputPort" type="xs:string" minOccurs="0"/>
+        <xs:element name="DefaultUndirectedPort" type="xs:string" minOccurs="0"/>
+        <xs:element name="Severity" type="xs:integer" minOccurs="0"/>
+        <xs:element name="CanBeAcknowledged" type="xs:boolean" minOccurs="0"/>
+        <xs:element ref="AFExtendedProperty" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="AFElementCategoryRef" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="AFAttributeTemplate" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="AFPort" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="AFAnalysisTemplate" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="AFNotificationRuleTemplate" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="SecurityAccessControl" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFEnumerationSet">
+    <!-- AllReferences adds AFSecurityIdentities from SecurityAccessControl if Security is also exported -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element ref="Description" minOccurs ="0"/>
+        <xs:element ref="AFEnumerationValue" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="SecurityAccessControl" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFEnumerationValue">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element name="Value" type="xs:integer" minOccurs="0"/>
+        <xs:element ref="Description" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFEventFrame">
+    <!-- AllReferences adds 
+        AFElementTemplate in Template
+        AFElementCategories referenced
+        AFEnumerationSets referenced in non-templated attributes
+        AFReferenceType from parents       
+        AFElements referenced
+        same as above for all child event frames 
+        AFSecurityIdentities from SecurityAccessControl if Security is also exported -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:group ref="AFBaseElement"/>
+        <xs:element name="IsLocked" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="AreValuesCaptured" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="StartTime" type="xs:dateTime" minOccurs="0"/>
+        <xs:element name="EndTime" type="xs:dateTime" minOccurs="0"/>
+        <xs:element name="Severity" type="xs:integer" minOccurs="0"/>
+        <xs:element name="CanBeAcknowledged" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="IsAcknowledged" type="xs:boolean" minOccurs="0" />
+        <xs:element name="AcknowledgedBy" type="xs:string" minOccurs="0"/>
+        <xs:element name="AcknowledgedDate" type="xs:dateTime" minOccurs="0"/>
+        <xs:group ref="AFBaseElementChildren"/>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element ref="AFEventFrame"/>
+          <xs:element ref="AFEventFrameRef"/>
+          <xs:element ref="AFElementRef"/>
+          <xs:element ref="AFModelRef"/>
+        </xs:choice>
+        <xs:element name="SecurityAccessControl" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute ref="ReferenceType" use="optional"/>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFEventFrameRef">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute ref="ReferenceType" use="optional"/>
+          <xs:attribute ref="id" use="optional"/>
+          <xs:attribute ref="operation" use="optional"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFExtendedProperty">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element name="Type" type="xs:string" minOccurs="0"/>
+        <xs:element ref="Value" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFFile">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="FileName" type="xs:string"/>
+        <xs:element ref="Description" minOccurs="0"/>
+        <xs:element name="Author" type="xs:string" minOccurs="0"/>
+        <xs:element name="ChangeDate" type="xs:dateTime"/>
+        <xs:element name="FileSize" type="xs:long" minOccurs="0"/>
+        <xs:element name="Data" type="xs:string"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFLayer">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element ref="Description" minOccurs="0"/>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element ref="AFElementRef"/>
+          <xs:element ref="AFModelRef"/>
+        </xs:choice>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFLayerRef">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute ref="id" use="optional"/>
+          <xs:attribute ref="operation" use="optional"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFModel">
+    <!-- AllReferences adds 
+        AFElementTemplate in Template
+        AFElementCategories referenced
+        AFEnumerationSets referenced in non templated attributes
+        AFReferenceTypes to referenced children
+        same as above for all child elements
+        AFSecurityIdentities from SecurityAccessControl if Security is also exported -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:group ref="AFBaseElement"/>
+        <xs:group ref="AFVersion"/>
+        <xs:group ref="AFBaseElementChildren"/>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element ref="AFElement"/>
+          <xs:element ref="AFModel"/>
+          <xs:element ref="AFElementRef"/>
+          <xs:element ref="AFModelRef"/>
+        </xs:choice>
+        <xs:element ref="AFLayer" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="AFConnection" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="SecurityAccessControl" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute ref="ReferenceType" use="optional"/>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFModelRef">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute ref="ReferenceType" use="optional"/>
+          <xs:attribute ref="id" use="optional"/>
+          <xs:attribute ref="operation" use="optional"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFModelAnalysis">
+    <!-- AllReferences includes referenced
+        AFAnalysisCategories
+        AFElementTemplate in Template
+        AFElementTemplate in CaseTemplate
+        AFElement in Target 
+        AFSecurityIdentities from SecurityAccessControl if Security is also exported -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element ref="Description" minOccurs="0"/>
+        <xs:element name="Template" type="xs:string" minOccurs="0"/>
+        <xs:element ref="Status" minOccurs="0"/>
+        <xs:element name="PublishResults" type="xs:boolean" minOccurs="0"/>
+        <xs:element ref="Priority" minOccurs="0"/>
+        <xs:element name="MaxQueueSize" type="xs:integer" minOccurs="0"/>
+        <xs:element name="GroupID" type="xs:short" minOccurs="0"/>
+        <xs:element ref="Target" minOccurs="0"/>
+        <xs:element ref="AFAnalysisCategoryRef" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="AFAnalysisRule" minOccurs="0"/>
+        <xs:element ref="AFTimeRule" minOccurs="0"/>
+        <xs:element name="SecurityAccessControl" type="xs:string" minOccurs="0"/>
+        <xs:element ref="AFCase" minOccurs="0" maxOccurs ="unbounded"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFNotificationTemplate">
+    <!-- AllReferences adds 
+        AFNotificationContacts
+        AFAnalysisTemplate 
+        AFSecurityIdentities from SecurityAccessControl if Security is also exported -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element ref="Description" minOccurs="0"/>
+        <xs:element name="BaseTemplate" minOccurs="0"/>
+        <xs:element name="Type" minOccurs="0">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="Boundary"/>
+              <xs:enumeration value="Flow"/>
+              <xs:enumeration value="Measurement"/>
+              <xs:enumeration value="Node"/>
+              <xs:enumeration value="None"/>
+              <xs:enumeration value="PIPoint"/>
+              <xs:enumeration value="Transfer"/>
+              <xs:enumeration value="Other"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="InstanceType" minOccurs="0">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="Notification"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="AllowElementToExtend" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="DefaultAttribute" type="xs:string" minOccurs="0"/>
+        <xs:element name="NamingPattern" type="xs:string" minOccurs="0"/>
+        <xs:element name="DefaultInputPort" type="xs:string" minOccurs="0"/>
+        <xs:element name="DefaultOutputPort" type="xs:string" minOccurs="0"/>
+        <xs:element name="DefaultUndirectedPort" type="xs:string" minOccurs="0"/>
+        <xs:element ref="AutoCreate" minOccurs="0"/>
+        <xs:element ref="Priority" minOccurs="0"/>
+        <xs:element name="ResendInterval" type="xs:double" minOccurs="0"/>
+        <xs:element name="ErrorMessage" type="xs:string" minOccurs="0"/>
+        <xs:element name="ExpirationPeriod" type="xs:double" minOccurs="0"/>
+        <xs:element name="NonrepititionInterval" type="xs:double" minOccurs="0"/>
+        <xs:element name="ChangeOnly" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="FallingBehindOption" minOccurs="0"/>
+        <xs:element name="MinAcknowledgements" type="xs:integer" minOccurs="0"/>
+        <xs:element ref="AFAnalysisTemplate" minOccurs="0"/>
+        <xs:element ref="AFExtendedProperty" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="AFElementCategoryRef" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="AFAttributeTemplate" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="AFPort" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="AFNotificationContact" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="AFNotificationContent" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="SecurityAccessControl" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFNotification">
+    <!-- AllReferences adds
+        AFNotificationTemplate in Template
+        AFNotificationContacts
+        AFAnalysis 
+        AFSecurityIdentities from SecurityAccessControl if Security is also exported -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:group ref="AFBaseElement"/>
+        <xs:element ref="Target" minOccurs="0"/>
+        <xs:element ref="Priority" minOccurs="0"/>
+        <xs:element ref="Status" minOccurs="0"/>
+        <xs:element name="ResendInterval" type="xs:double" minOccurs="0"/>
+        <xs:element name="ErrorMessage" type="xs:string" minOccurs="0"/>
+        <xs:element name="ExpirationPeriod" type="xs:double" minOccurs="0"/>
+        <xs:element name="NonrepititionInterval" type="xs:double" minOccurs="0"/>
+        <xs:element name="ChangeOnly" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="FallingBehindOption" minOccurs="0"/>
+        <xs:element name="MinAcknowledgements" type="xs:integer" minOccurs="0"/>
+        <!--The element Analysis is Obsolete.  Use AFAnalysis starting with (AF 2.1)-->
+        <xs:element name="Analysis" minOccurs="0">
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="xs:string">
+                <xs:attribute ref="id" use="optional"/>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element ref="AFAnalysis" minOccurs="0"/>
+        <xs:group ref="AFBaseElementChildren"/>
+        <xs:element ref="AFNotificationContact" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="AFNotificationContent" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="SecurityAccessControl" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFNotificationContact">
+    <!-- AllReferences adds 
+      AFNotificationContactTemplate
+      child AFNoticationContacts
+      AFContact -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element ref="Description" minOccurs="0"/>
+        <xs:element name="Template" type="xs:string" minOccurs="0"/>
+        <xs:element ref="ContactType" minOccurs="0"/>
+        <xs:element name="Available" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="RetryInterval" type="xs:double" minOccurs="0"/>
+        <xs:element name="ExpirationPeriod" type="xs:double" minOccurs="0"/>
+        <xs:element name="EscalationTimeout" type="xs:double" minOccurs="0"/>
+        <xs:element name="MaximumRetries" type="xs:integer" minOccurs="0"/>
+        <xs:element name="MinAcknowledgements" type="xs:integer" minOccurs="0"/>
+        <xs:element name="NotifyWhenInstanceEnded" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="CategoryString" type="xs:string" minOccurs="0"/>
+        <xs:element name="DeliveryChannel" type="xs:string" minOccurs="0"/>
+        <xs:element name="ConfigString" type="xs:string" minOccurs="0"/>
+        <xs:element ref="AFContactRef" minOccurs="0"/>
+        <xs:element ref="AFNotificationContact" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFNotificationContactRef">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute ref="id" use="optional"/>
+          <xs:attribute ref="operation" use="optional"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>	<xs:element name="AFNotificationContactTemplate">
+    <!-- AllReferences adds 
+        child AFNotificationContactTemplates
+        referenced Contacts 
+         AFSecurityIdentities from SecurityAccessControl if Security is also exported -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element ref="Description" minOccurs="0"/>
+        <xs:element ref="ContactType" minOccurs="0"/>
+        <xs:element name="Available" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="RetryInterval" type="xs:double" minOccurs="0"/>
+        <xs:element name="ExpirationPeriod" type="xs:double" minOccurs="0"/>
+        <xs:element name="EscalationTimeout" type="xs:double" minOccurs="0"/>
+        <xs:element name="MaximumRetries" type="xs:integer" minOccurs="0"/>
+        <xs:element name="MinAcknowledgements" type="xs:integer" minOccurs="0"/>
+        <xs:element name="CategoryString" type="xs:string" minOccurs="0"/>
+        <xs:element name="NotifyWhenInstanceEnded" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="IsInternal" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="DeliveryChannel" type="xs:string" minOccurs="0"/>
+        <xs:element name="ConfigString" type="xs:string" minOccurs="0"/>
+        <xs:element ref="AFContactRef" minOccurs="0"/>
+        <xs:element ref="AFNotificationContactTemplateRef" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="SecurityAccessControl" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFNotificationContactTemplateRef">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute ref="id" use="optional"/>
+          <xs:attribute ref="operation" use="optional"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFNotificationContent">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element name="ContentType" type="xs:string" minOccurs="0"/>
+        <xs:element name="DisplayName" type="xs:string" minOccurs="0"/>
+        <xs:element ref="AFNotificationContactRef" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFDeliveryFormat">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element name="DeliveryChannel" type="xs:string" minOccurs="0"/>
+        <xs:element name="Property" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Name" />
+              <xs:element name="Value" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFNotificationRule">
+    <!-- AllReferences adds 
+      AFNotificationRuleTemplate
+      AFNotificationContactTemplate (via Subscribers)
+      child AFNoticationContacts
+      AFContact -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element ref="Description" minOccurs="0"/>
+        <xs:element name="Status" type="xs:string" minOccurs="0"/>
+        <xs:element name="MultiTriggerEventOption" type="xs:string" minOccurs="0"/>
+        <xs:element name="ResendInterval" type="xs:double" minOccurs="0"/>
+        <xs:element name="NonrepetitionInterval" type="xs:double" minOccurs="0"/>
+        <xs:element name="Criteria" type="xs:string" minOccurs="0"/>
+        <xs:element name="Template" type="xs:string" minOccurs="0"/>
+        <xs:element name="ContentExample" type="xs:string" minOccurs="0"/>
+        <xs:element name="DefaultDeliveryFormat" type="xs:string" minOccurs="0"/>
+        <xs:group ref="AFNotificationRuleChildren"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFNotificationRuleSubscriber">
+    <!-- AllReferences adds 
+      AFNotificationContactTemplate
+      child AFNoticationContacts
+      AFContact -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element ref="Description" minOccurs="0"/>
+        <xs:element name="Template" type="xs:string" minOccurs="0"/>
+        <xs:element name="RetryInterval" type="xs:double" minOccurs="0"/>
+        <xs:element name="EscalationTimeout" type="xs:double" minOccurs="0"/>
+        <xs:element name="MaximumRetries" type="xs:double" minOccurs="0"/>
+        <xs:element name="NotifyOption" type="xs:string" minOccurs="0"/>
+        <xs:element name="DeliveryChannel" type="xs:string" minOccurs="0"/>
+        <xs:element ref="AFDeliveryFormat" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="AFNotificationRuleSubscriber" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFNotificationRuleTemplate">
+    <!-- AllReferences adds 
+      AFNotificationContactTemplate (via Subscribers)
+      child AFNoticationContacts
+      AFContact -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element ref="Description" minOccurs="0"/>
+        <xs:element name="CreateEnabled" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="MultiTriggerEventOption" type="xs:string" minOccurs="0"/>
+        <xs:element name="ResendInterval" type="xs:double" minOccurs="0"/>
+        <xs:element name="NonrepetitionInterval" type="xs:double" minOccurs="0"/>
+        <xs:element name="Criteria" type="xs:string" minOccurs="0"/>
+        <xs:element name="Target" type="xs:string" minOccurs="0"/>
+        <xs:element name="ContentExample" type="xs:string" minOccurs="0"/>
+        <xs:element name="DefaultDeliveryFormat" type="xs:string" minOccurs="0"/>
+        <xs:group ref="AFNotificationRuleChildren"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFNotificationRuleCategory">
+    <xs:complexType>
+      <xs:group ref="AFCategory"/>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFNotificationRuleCategoryRef">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute ref="id" use="optional"/>
+          <xs:attribute ref="operation" use="optional"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFPlugIn">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element ref="Description" minOccurs="0"/>
+        <xs:element name="TypeName" type="xs:string" minOccurs="0"/>
+        <xs:element name="CompatibilityVersion" type="xs:string" minOccurs="0"/>
+        <xs:element name="AssemblyID" type="xs:string" minOccurs="0"/>
+        <xs:element name="AssemblyName" type="xs:string" minOccurs="0"/>
+        <xs:element name="AssemblyVersion" type="xs:string" minOccurs="0"/>
+        <xs:element name="AssemblyTime" type="xs:dateTime" minOccurs="0"/>
+        <xs:element name="FileName" type="xs:string" minOccurs="0"/>
+        <xs:element name="SupportAssembly" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="FileName" type="xs:string" minOccurs="0"/>
+              <xs:element name="Directory" type="xs:string" minOccurs="0"/>
+              <xs:element name="AssemblyTime" type="xs:dateTime" minOccurs="0"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFPort">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element ref="Description" minOccurs="0"/>
+        <xs:element name="Type">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="Input"/>
+              <xs:enumeration value="Output"/>
+              <xs:enumeration value="Undirected"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="MaxConnections" type="xs:integer" minOccurs="0"/>
+        <xs:element name="AllowedElementTypes" type="xs:string" minOccurs="0"/>
+        <xs:element name="AllowedElementTemplate" type="xs:string" minOccurs="0"/>
+        <xs:element ref="AFElementCategoryRef" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFResult">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element name="Attribute" type="xs:string" minOccurs="0"/>
+        <xs:element name="IsOutput" type="xs:boolean" minOccurs="0"/>
+        <xs:group ref="AFValue"/>
+        <xs:element ref="AFAdjustment" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFReferenceTypeCategory">
+    <xs:complexType>
+      <xs:group ref="AFCategory"/>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFReferenceTypeCategoryRef">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute ref="id" use="optional"/>
+          <xs:attribute ref="operation" use="optional"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFReferenceType">
+    <!-- AllReferences adds referenced 
+        AFReferenceTypeCategories
+        AFElementTemplates from AllowedParentElementTemplate and AllowedChildElementTemplate 
+        AFSecurityIdentities from SecurityAccessControl if Security is also exported -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element name="ChildName" type="xs:string" minOccurs="0"/>
+        <xs:element name="ParentName" type="xs:string" minOccurs="0"/>
+        <xs:element name="Strength">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="Composition"/>
+              <xs:enumeration value="Strong"/>
+              <xs:enumeration value="Weak"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="AllowedParentElementTemplate" type="xs:string" minOccurs="0"/>
+        <xs:element name="AllowedChildElementTemplate" type="xs:string" minOccurs="0"/>
+        <xs:element ref="AFReferenceTypeCategoryRef" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="SecurityAccessControl" type="xs:string" minOccurs="0"/> 
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFSecurityIdentity">
+    <!-- AllReferences adds AFSecurityIdentities from SecurityAccessControl if Security is also exported -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element ref="Description"  minOccurs="0"/>
+        <xs:element name="IsEnabled" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="SecurityAccessControl" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element> 
+  
+  <xs:element name="AFSecurityMapping">
+    <!-- AllReferences adds AFSecurityIdentity 
+        AFSecurityIdentities from SecurityAccessControl if Security is also exported -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element ref="Description"  minOccurs="0"/>
+        <xs:element name="Account"  type="xs:string"/>
+        <xs:element name="SecurityIdentity" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControl" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element> 
+
+  <xs:element name="AFTable">
+    <!-- AllReferences adds referenced
+      AFTableConnection
+      AFTableCategories 
+      AFSecurityIdentities from SecurityAccessControl if Security is also exported -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element ref="Description" minOccurs="0"/>
+        <xs:element name="TimeZone" minOccurs="0"/>
+        <xs:element name="ConvertToLocalTime" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="CacheInterval" type="xs:double" minOccurs="0"/>
+        <xs:element name="ExternalPersist" type="xs:boolean" minOccurs="0"/>
+        <xs:choice>
+          <xs:sequence>
+            <xs:element name="DataAdapter" type="xs:string" minOccurs="0"/>
+            <xs:element name="Connection" type="xs:string" minOccurs="0"/>
+            <xs:element name="Command" type="xs:string" minOccurs="0"/>
+            <xs:element name="ImpersonateUser" type="xs:boolean" minOccurs="0"/>
+            <xs:choice>
+              <!-- Clear text password cannot be exported, but can be imported -->
+              <xs:element name="Password" type="xs:string" minOccurs="0"/>
+              <!-- Encrypted password is exported but can only be used for import if the Command is unmodified -->
+              <xs:element name="EncryptedPassword" type="xs:string" minOccurs="0"/>
+            </xs:choice>
+          </xs:sequence>
+          <xs:sequence>
+            <xs:element name="Schema" minOccurs="0">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:any namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="DataTable" minOccurs="0">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:choice>
+        <xs:group ref="AFVersion"/>
+        <xs:element ref="AFExtendedProperty" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="AFTableCategoryRef" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="SecurityAccessControl" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFTableConnection">
+    <!-- AllReferences adds AFSecurityIdentities from SecurityAccessControl if Security is also exported -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element ref="Description" minOccurs="0"/>
+        <xs:choice>
+          <xs:sequence>
+            <xs:element name="DataAdapter" type="xs:string" minOccurs="0"/>
+            <xs:element name="Connection" type="xs:string" minOccurs="0"/>
+            <xs:element name="ImpersonateUser" type="xs:boolean" minOccurs="0"/>  
+            <xs:choice>
+              <!-- Clear text password cannot be exported, but can be imported -->
+              <xs:element name="Password" type="xs:string" minOccurs="0"/>
+              <!-- Encrypted password is exported but can only be used for import if the Command is unmodified -->
+              <xs:element name="EncryptedPassword" type="xs:string" minOccurs="0"/>
+            </xs:choice>
+          </xs:sequence>
+        </xs:choice>
+        <xs:group ref="AFVersion"/>
+        <xs:element ref="AFExtendedProperty" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="AFTableCategoryRef" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="SecurityAccessControl" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFTableCategory">
+    <xs:complexType>
+      <xs:group ref="AFCategory"/>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFTableCategoryRef">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute ref="id" use="optional"/>
+          <xs:attribute ref="operation" use="optional"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFTimeRule">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="AFPlugIn" minOccurs ="0">
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="xs:string">
+                <xs:attribute ref="id" use="optional"/>
+                <xs:attribute ref="operation" use="optional"/>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="ConfigString" type="xs:string" minOccurs="0"/>
+        <xs:element ref="AFTimeRule" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFTransfer">
+    <!-- AllReferences adds 
+        AFElementCategories referenced
+        AFEnumerationSets referenced in non templated attributes
+        AFElements referenced in Source and Destination -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:group ref="AFBaseElement"/>
+        <xs:element name="IsLocked" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="AreValuesCaptured" type="xs:boolean" minOccurs="0"/>
+        <xs:element name="StartTime" type="xs:dateTime" minOccurs="0"/>
+        <xs:element name="EndTime" type="xs:dateTime" minOccurs="0"/>
+        <xs:element name="Source" type="xs:string" minOccurs="0"/>
+        <xs:element name="SourcePort" type="xs:string" minOccurs="0"/>
+        <xs:element name="Destination" type="xs:string" minOccurs="0"/>
+        <xs:element name="DestinationPort" type="xs:string" minOccurs="0"/>
+        <xs:group ref="AFBaseElementChildren"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AFTransferRef">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute ref="id" use="optional"/>
+          <xs:attribute ref="operation" use="optional"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="PISystem">
+    <!-- AllReferences adds all AFSecurityIdentities if Security is also exported -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element ref="Description" minOccurs="0"/>
+        <xs:element name="SecurityAccessControl" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlContact" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlSecurityIdentity" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlSecurityMapping" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlDatabase" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlNotificationContactTemplate" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlAnalysis" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlAnalysisTemplate" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlCategory" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlElement" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlElementTemplate" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlEnumerationSet" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlEventFrame" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlNotification" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlNotificationRule" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlNotificationRuleTemplate" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlReferenceType" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlTable" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlTableConnection" type="xs:string" minOccurs="0"/>
+        <xs:element name="SecurityAccessControlTransfer" type="xs:string" minOccurs="0"/>
+        <xs:element ref="AFExtendedProperty" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="AFDeliveryFormat" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UOMDatabase">
+    <!-- AllReferences adss AFSecurityIdentities from SecurityAccessControl if Security is also exported -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name" minOccurs="0"/>
+        <xs:element ref="UOMGroup" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="UOMClass" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="UOM" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="SecurityAccessControl" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UOMGroup">
+    <!-- AllReferences adds UOMGroups from UOMs-->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element ref="Description" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UOMMapping">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute ref="UOMGroup" use="optional"/>
+          <xs:attribute ref="id" use="optional"/>
+          <xs:attribute ref="operation" use="optional"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UOMClass">
+    <!-- AllReferences adds UOMClasses from UOMBaseClasses-->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element ref="Description" minOccurs="0"/>
+        <xs:element name="CanonicalUOM" type="xs:string"/>
+        <xs:element name="CanonicalAbbr" type="xs:string" minOccurs="0"/>
+        <xs:element name="CanonicalID" type="xs:string" minOccurs="0"/>
+        <xs:element ref="UOMBaseClass" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UOMBaseClass">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element name="BasePower" type="xs:integer" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UOM">
+    <!-- AllReferences adds AFUOM from RefUOM -->
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="id" minOccurs="0"/>
+        <xs:element ref="Name"/>
+        <xs:element name="Abbreviation" type="xs:string" minOccurs="0"/>
+        <xs:element ref="Description" minOccurs="0"/>
+        <xs:choice>
+          <xs:sequence>
+            <xs:element name="RefFactor" type="xs:double" minOccurs="0"/>
+            <xs:element name="RefOffset" type="xs:double" minOccurs="0"/>
+          </xs:sequence>
+          <xs:sequence>
+            <xs:element name="RefFormulaFrom" type="xs:string" minOccurs="0"/>
+            <xs:element name="RefFormulaTo" type="xs:string" minOccurs="0"/>
+          </xs:sequence>
+        </xs:choice>
+        <xs:element name="Factor" type="xs:double" minOccurs="0"/>
+        <xs:element name="Offset" type="xs:double" minOccurs="0"/>
+        <xs:element name="RefUOM" type="xs:string" minOccurs="0"/>
+        <xs:element ref="UOMMapping" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="Class" type="xs:string" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute ref="operation" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
