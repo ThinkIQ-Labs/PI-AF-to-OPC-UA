@@ -1,17 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<AF xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="OSIsoft.AF.xsd" SchemaVersion="2.0" SoftwareVersion="2.10.9.593" ExportMode="NoUniqueID" PISystem="DESKTOP-GV" Database="GV_001" Description="" Created="2022-06-20T17:57:56.7809757Z" id="f675807a-a9f0-4130-8671-29f3f8418131" ParentKey="f675807a-a9f0-4130-8671-29f3f8418131" ExportedObject="NamedCollectionList" ExportedType="AFNamedCollectionList`1" Identity="ElementTemplate">
+<AF xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="OSIsoft.AF.xsd" SchemaVersion="2.0" SoftwareVersion="2.10.9.593" ExportMode="AllReferences, NoUniqueID, DefaultValues, Flat" PISystem="DESKTOP-GV" Database="GV_001" Description="" Created="2022-06-20T18:27:01.0837344Z" id="1a5c2989-f435-47a9-a454-6d7a171dae71" ParentKey="f675807a-a9f0-4130-8671-29f3f8418131" ExportedObject="Refridgerator with Water Dispenser" ExportedType="AFElementTemplate" Identity="ElementTemplate" PIPersist="211 {9895150E-085D-4fcb-A16D-5EF5D2527196} 2\{4650586b-8b43-408b-b416-2d5154be8b53}\ElementTemplates[{1a5c2989-f435-47a9-a454-6d7a171dae71}]*DESKTOP-GV\GV_001\ElementTemplates[Refridgerator with Water Dispenser]">
   <AFElementTemplate>
     <Name>Refridgerator</Name>
     <Description>a basic refridgerator</Description>
     <BaseTemplateOnly>false</BaseTemplateOnly>
+    <BaseTemplate />
     <Type>None</Type>
     <InstanceType>Element</InstanceType>
     <AllowElementToExtend>false</AllowElementToExtend>
+    <DefaultAttribute />
+    <NamingPattern />
+    <DefaultInputPort />
+    <DefaultOutputPort />
+    <DefaultUndirectedPort />
     <AFAttributeTemplate>
       <Name>DeltaT</Name>
       <Description>temperature difference between inside and outside in deg F</Description>
+      <IsHidden>false</IsHidden>
+      <IsManualDataEntry>false</IsManualDataEntry>
+      <IsConfigurationItem>false</IsConfigurationItem>
+      <IsExcluded>false</IsExcluded>
+      <IsIndexed>false</IsIndexed>
+      <Trait />
       <DefaultUOM>°F</DefaultUOM>
+      <DisplayDigits>-5</DisplayDigits>
       <Type>Double</Type>
+      <TypeQualifier />
       <Value type="Double">0</Value>
       <DataReference>Formula</DataReference>
       <ConfigString>A=Temp_Inside;B=Temp_Outside;[B-A]</ConfigString>
@@ -19,69 +33,172 @@
     <AFAttributeTemplate>
       <Name>Depth</Name>
       <Description>depth in inch</Description>
+      <IsHidden>false</IsHidden>
+      <IsManualDataEntry>false</IsManualDataEntry>
+      <IsConfigurationItem>false</IsConfigurationItem>
+      <IsExcluded>false</IsExcluded>
+      <IsIndexed>false</IsIndexed>
+      <Trait />
       <DefaultUOM>in</DefaultUOM>
+      <DisplayDigits>-5</DisplayDigits>
       <Type>Double</Type>
+      <TypeQualifier />
       <Value type="Double">0</Value>
+      <DataReference />
+      <ConfigString />
     </AFAttributeTemplate>
     <AFAttributeTemplate>
       <Name>Height</Name>
       <Description>height in inch</Description>
+      <IsHidden>false</IsHidden>
+      <IsManualDataEntry>false</IsManualDataEntry>
+      <IsConfigurationItem>false</IsConfigurationItem>
+      <IsExcluded>false</IsExcluded>
+      <IsIndexed>false</IsIndexed>
+      <Trait />
       <DefaultUOM>in</DefaultUOM>
+      <DisplayDigits>-5</DisplayDigits>
       <Type>Double</Type>
+      <TypeQualifier />
       <Value type="Double">0</Value>
+      <DataReference />
+      <ConfigString />
     </AFAttributeTemplate>
     <AFAttributeTemplate>
       <Name>Make</Name>
+      <Description />
+      <IsHidden>false</IsHidden>
+      <IsManualDataEntry>false</IsManualDataEntry>
+      <IsConfigurationItem>false</IsConfigurationItem>
+      <IsExcluded>false</IsExcluded>
+      <IsIndexed>false</IsIndexed>
+      <Trait />
+      <DefaultUOM />
+      <DisplayDigits>-5</DisplayDigits>
       <Type>String</Type>
+      <TypeQualifier />
       <Value type="String"></Value>
+      <DataReference />
+      <ConfigString />
     </AFAttributeTemplate>
     <AFAttributeTemplate>
       <Name>Model</Name>
+      <Description />
+      <IsHidden>false</IsHidden>
+      <IsManualDataEntry>false</IsManualDataEntry>
+      <IsConfigurationItem>false</IsConfigurationItem>
+      <IsExcluded>false</IsExcluded>
+      <IsIndexed>false</IsIndexed>
+      <Trait />
+      <DefaultUOM />
+      <DisplayDigits>-5</DisplayDigits>
       <Type>String</Type>
+      <TypeQualifier />
       <Value type="String"></Value>
+      <DataReference />
+      <ConfigString />
     </AFAttributeTemplate>
     <AFAttributeTemplate>
       <Name>Power_Draw</Name>
       <Description>power draw metered in watt</Description>
+      <IsHidden>false</IsHidden>
+      <IsManualDataEntry>false</IsManualDataEntry>
+      <IsConfigurationItem>false</IsConfigurationItem>
+      <IsExcluded>false</IsExcluded>
+      <IsIndexed>false</IsIndexed>
+      <Trait />
       <DefaultUOM>W</DefaultUOM>
+      <DisplayDigits>-5</DisplayDigits>
       <Type>Double</Type>
+      <TypeQualifier />
       <Value type="Double">0</Value>
       <DataReference>PI Point</DataReference>
+      <ConfigString />
     </AFAttributeTemplate>
     <AFAttributeTemplate>
       <Name>Serial_Number</Name>
+      <Description />
+      <IsHidden>false</IsHidden>
+      <IsManualDataEntry>false</IsManualDataEntry>
+      <IsConfigurationItem>false</IsConfigurationItem>
+      <IsExcluded>false</IsExcluded>
+      <IsIndexed>false</IsIndexed>
+      <Trait />
+      <DefaultUOM />
+      <DisplayDigits>-5</DisplayDigits>
       <Type>String</Type>
+      <TypeQualifier />
       <Value type="String"></Value>
+      <DataReference />
+      <ConfigString />
     </AFAttributeTemplate>
     <AFAttributeTemplate>
       <Name>Temp_Inside</Name>
       <Description>inside temperature in deg F</Description>
+      <IsHidden>false</IsHidden>
+      <IsManualDataEntry>false</IsManualDataEntry>
+      <IsConfigurationItem>false</IsConfigurationItem>
+      <IsExcluded>false</IsExcluded>
+      <IsIndexed>false</IsIndexed>
+      <Trait />
       <DefaultUOM>°F</DefaultUOM>
+      <DisplayDigits>-5</DisplayDigits>
       <Type>Double</Type>
+      <TypeQualifier />
       <Value type="Double">0</Value>
       <DataReference>PI Point</DataReference>
+      <ConfigString />
     </AFAttributeTemplate>
     <AFAttributeTemplate>
       <Name>Temp_Outside</Name>
       <Description>outside temperature in deg F</Description>
+      <IsHidden>false</IsHidden>
+      <IsManualDataEntry>false</IsManualDataEntry>
+      <IsConfigurationItem>false</IsConfigurationItem>
+      <IsExcluded>false</IsExcluded>
+      <IsIndexed>false</IsIndexed>
+      <Trait />
       <DefaultUOM>°F</DefaultUOM>
+      <DisplayDigits>-5</DisplayDigits>
       <Type>Double</Type>
+      <TypeQualifier />
       <Value type="Double">0</Value>
       <DataReference>PI Point</DataReference>
+      <ConfigString />
     </AFAttributeTemplate>
     <AFAttributeTemplate>
       <Name>Weight</Name>
       <Description>weight of unit in pounds</Description>
+      <IsHidden>false</IsHidden>
+      <IsManualDataEntry>false</IsManualDataEntry>
+      <IsConfigurationItem>false</IsConfigurationItem>
+      <IsExcluded>false</IsExcluded>
+      <IsIndexed>false</IsIndexed>
+      <Trait />
       <DefaultUOM>lb</DefaultUOM>
+      <DisplayDigits>-5</DisplayDigits>
       <Type>Double</Type>
+      <TypeQualifier />
       <Value type="Double">0</Value>
+      <DataReference />
+      <ConfigString />
     </AFAttributeTemplate>
     <AFAttributeTemplate>
       <Name>Width</Name>
       <Description>width in inch</Description>
+      <IsHidden>false</IsHidden>
+      <IsManualDataEntry>false</IsManualDataEntry>
+      <IsConfigurationItem>false</IsConfigurationItem>
+      <IsExcluded>false</IsExcluded>
+      <IsIndexed>false</IsIndexed>
+      <Trait />
       <DefaultUOM>in</DefaultUOM>
+      <DisplayDigits>-5</DisplayDigits>
       <Type>Double</Type>
+      <TypeQualifier />
       <Value type="Double">0</Value>
+      <DataReference />
+      <ConfigString />
     </AFAttributeTemplate>
   </AFElementTemplate>
   <AFElementTemplate>
@@ -92,19 +209,44 @@
     <Type>None</Type>
     <InstanceType>Element</InstanceType>
     <AllowElementToExtend>false</AllowElementToExtend>
+    <DefaultAttribute />
+    <NamingPattern />
+    <DefaultInputPort />
+    <DefaultOutputPort />
+    <DefaultUndirectedPort />
     <AFAttributeTemplate>
       <Name>Water_Dispenser_Is_Running</Name>
       <Description>indicates if the water dispenser is running</Description>
+      <IsHidden>false</IsHidden>
+      <IsManualDataEntry>false</IsManualDataEntry>
+      <IsConfigurationItem>false</IsConfigurationItem>
+      <IsExcluded>false</IsExcluded>
+      <IsIndexed>false</IsIndexed>
+      <Trait />
+      <DefaultUOM />
+      <DisplayDigits>-5</DisplayDigits>
       <Type>Boolean</Type>
+      <TypeQualifier />
       <Value type="Boolean">False</Value>
       <DataReference>PI Point</DataReference>
+      <ConfigString />
     </AFAttributeTemplate>
     <AFAttributeTemplate>
       <Name>Water_Draw</Name>
       <Description>indicates the fixed water draw speed in gal/min</Description>
+      <IsHidden>false</IsHidden>
+      <IsManualDataEntry>false</IsManualDataEntry>
+      <IsConfigurationItem>false</IsConfigurationItem>
+      <IsExcluded>false</IsExcluded>
+      <IsIndexed>false</IsIndexed>
+      <Trait />
       <DefaultUOM>US gal/min</DefaultUOM>
+      <DisplayDigits>-5</DisplayDigits>
       <Type>Double</Type>
+      <TypeQualifier />
       <Value type="Double">1</Value>
+      <DataReference />
+      <ConfigString />
     </AFAttributeTemplate>
   </AFElementTemplate>
 </AF>

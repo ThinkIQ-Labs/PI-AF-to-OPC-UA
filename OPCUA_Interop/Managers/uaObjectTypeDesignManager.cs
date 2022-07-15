@@ -26,7 +26,7 @@ namespace OPCUA_Interop.Managers
             {
                 SymbolicName = new XmlQualifiedName(SymbolicName, NameSpace),
                 BaseType = new XmlQualifiedName("BaseObjectType", "http://opcfoundation.org/UA/"),
-                IsAbstract = true,
+                IsAbstract = false,
                 SupportsEvents = true,
                 Description = new LocalizedText()
                 {

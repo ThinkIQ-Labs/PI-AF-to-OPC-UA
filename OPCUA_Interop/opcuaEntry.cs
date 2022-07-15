@@ -1,4 +1,5 @@
 ﻿using OPCUA_Interop.Managers;
+using System.Diagnostics;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -30,6 +31,9 @@ namespace OPCUA_Interop
         public XmlSerializerNamespaces XmlSerializerNamespaces { get; set; }
         public uaNameSpaceManager uaNameSpaceManager { get; set; }
         public uaObjectTypeDesignManager uaObjectTypeDesignManager { get; set; }
+
+        // name, id, type
+
 
         public void CreateNewModel(string domain, string name)
         {
@@ -63,6 +67,58 @@ namespace OPCUA_Interop
 
             return XDocument.Parse(File.ReadAllText(fileUrl)).ToString();
 
+        }
+
+        public string GenerateCSV(string fileUrl)
+        {
+            using (TextWriter writer = new StreamWriter(fileUrl))
+            {
+                var typeCounter = 0;
+                var propertyCounter = 0;
+                foreach(var aType in uaTypeDesings)
+                {
+                    typeCounter++;
+                    writer.WriteLine($"{aType.SymbolicName.Name},{10000 + typeCounter},ObjectType");
+                    foreach(var aProperty in aType.Children.Items)
+                    {
+                        propertyCounter++;
+                        writer.WriteLine($"{aProperty.SymbolicName.Name},{20000 + propertyCounter},Variable");
+                    }
+                }
+            }
+            return File.ReadAllText(fileUrl);
+
+        }
+
+        public void CompileNodeset(string compilerExecutableUrl, string xmlFileUrl, string csvFileUrl, string outputDirUrl)
+        {
+            var args = new string[]
+                {
+                    "compile",
+                    "-d2",
+                    xmlFileUrl,
+                    "-cg",
+                    csvFileUrl,
+                    "-o2",
+                    outputDirUrl
+                };
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.FileName = $"{compilerExecutableUrl}";
+            startInfo.Arguments = String.Join(" ", args);
+
+            try
+            {
+                // Start the process with the info we specified.
+                // Call WaitForExit and then the using statement will close.
+                using (Process exeProcess = Process.Start(startInfo))
+                {
+                    exeProcess.WaitForExit();
+                }
+            }
+            catch
+            {
+                // Log error.
+            }
         }
     }
 }
