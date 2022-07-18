@@ -55,5 +55,5 @@ var csvFileUrl = $"{dirInfo.FullName}\\test2.csv";
 string aCsvFileContent = md.uaModelDesignManager.GenerateCSV(csvFileUrl);
 Console.WriteLine(aCsvFileContent);
 
-var compilerExecutable = @"C:\Users\GregorVilkner\source\repos\UA-ModelCompiler\build\bin\Debug\net6.0\Opc.Ua.ModelCompiler.exe";
+var compilerExecutable = @"C:\Users\public\source\repos\UA-ModelCompiler\build\bin\Debug\net6.0\Opc.Ua.ModelCompiler.exe";
 md.uaModelDesignManager.CompileNodeset(compilerExecutable, xmlFileUrl, csvFileUrl, dirInfo.FullName);
