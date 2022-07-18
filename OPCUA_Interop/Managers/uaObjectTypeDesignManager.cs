@@ -18,8 +18,8 @@ namespace OPCUA_Interop.Managers
             this.model.Items = new NodeDesign[] { };
         }
 
-        // <Namespace Name="animal" Prefix="animal"
-        //      XmlNamespace="https://opcua.rocks/UA/animal/Types.xsd" XmlPrefix="animal">https://opcua.rocks/UA/animal/</Namespace>
+        //<ObjectType SymbolicName = "ANIMAL:AnimalType" BaseType="ua:BaseObjectType" IsAbstract="true" SupportsEvents="true">
+        //        <Description>Base type for all animals</Description>
         public ObjectTypeDesignExtension AddBasicTypeDesign(string SymbolicName, string Description,string NameSpace)
         {
             ObjectTypeDesign newObjectTypeDesign = new ObjectTypeDesign

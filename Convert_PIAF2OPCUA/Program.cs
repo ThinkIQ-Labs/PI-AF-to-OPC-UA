@@ -1,31 +1,44 @@
 ﻿using PIAF_Interop;
-using OPCUA_Interop;
+using ua.model.sdk.Managers;
+using ua.model.sdk.Model;
 using System.Xml;
+using UAOOI.SemanticData.UAModelDesignExport.XML;
 
 afEntry afEntry = new afEntry();
 afEntry.fileUrl = "./data/element templates.xml";
 afEntry.ReadFile();
 
-uaEntry uaEntry = new uaEntry();
-
-var domain = "https://thinkiq.com/UA";
-var name = "fridge";
-var myNameSpace = $"{domain}/{name}/";
-
-uaEntry.CreateNewModel(domain, name);
+uaModelDesign md = new uaModelDesign("https://thinkiq.com/UA", "fridge");
+var uaNamespace = md.uaNameSpaces["OpcUa"].NameSpace.Value;
+var fridgeNamespace = md.uaNameSpaces["fridge"].NameSpace.Value;
 
 foreach (var aAfTemplate in afEntry.afElementTemplates)
 {
 
-    var aType = uaEntry.uaObjectTypeDesignManager.AddBasicTypeDesign(aAfTemplate.Name.Replace(" ","_"), aAfTemplate.Description, myNameSpace);
+    var aType = md.uaObjectTypeDesignManager.AddBasicObjectTypeDesign(
+        new XmlQualifiedName(aAfTemplate.Name.Replace(" ","_"), fridgeNamespace),
+        new XmlQualifiedName("BaseObjectType", uaNamespace));
+    aType.ObjectTypeDesign.Description = new LocalizedText()
+    {
+        Key = "en-US",
+        Value = aAfTemplate.Description
+    };
     
     string? aAfTemplateBaseTypeString = afEntry.GetAFElementTemplateBaseTypeString(aAfTemplate);
-    aType.objectTypeDesign.BaseType = aAfTemplateBaseTypeString == null ? null : new System.Xml.XmlQualifiedName(aAfTemplateBaseTypeString, myNameSpace);
+    aType.ObjectTypeDesign.BaseType = aAfTemplateBaseTypeString == null ? null : new System.Xml.XmlQualifiedName(aAfTemplateBaseTypeString, fridgeNamespace);
 
 
     foreach (var aAfAttribute in aAfTemplate.AFAttributeTemplate)
     {
-        aType.uaPropertyDesignManager.AddBasicPropertyDesign(aAfAttribute.Name, aAfAttribute.Type, ValueRank.Scalar, ModellingRule.Mandatory, aAfAttribute.Description, myNameSpace);
+        var aProperty = aType.uaPropertyDesignManager.AddBasicPropertyDesign(
+            new XmlQualifiedName(aAfAttribute.Name, fridgeNamespace),
+            new XmlQualifiedName(aAfAttribute.Type, uaNamespace)
+            );
+        aProperty.PropertyDesign.Description = new LocalizedText()
+        {
+            Key = "en-US",
+            Value = aAfAttribute.Description
+        };
     }
 
 
@@ -35,12 +48,12 @@ foreach (var aAfTemplate in afEntry.afElementTemplates)
 var dirInfo = Directory.CreateDirectory("./out");
 
 var xmlFileUrl = $"{dirInfo.FullName}\\test2.xml";
-string aXmlFileContent = uaEntry.GenerateXML(xmlFileUrl);
+string aXmlFileContent = md.uaModelDesignManager.GenerateXML(xmlFileUrl);
 Console.WriteLine(aXmlFileContent);
 
 var csvFileUrl = $"{dirInfo.FullName}\\test2.csv";
-string aCsvFileContent = uaEntry.GenerateCSV(csvFileUrl);
+string aCsvFileContent = md.uaModelDesignManager.GenerateCSV(csvFileUrl);
 Console.WriteLine(aCsvFileContent);
 
 var compilerExecutable = @"C:\Users\GregorVilkner\source\repos\UA-ModelCompiler\build\bin\Debug\net6.0\Opc.Ua.ModelCompiler.exe";
-uaEntry.CompileNodeset(compilerExecutable, xmlFileUrl, csvFileUrl, dirInfo.FullName);
+md.uaModelDesignManager.CompileNodeset(compilerExecutable, xmlFileUrl, csvFileUrl, dirInfo.FullName);

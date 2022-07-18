@@ -8,10 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OPCUA_Interop\OPCUA_Interop.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="Data\test2.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
