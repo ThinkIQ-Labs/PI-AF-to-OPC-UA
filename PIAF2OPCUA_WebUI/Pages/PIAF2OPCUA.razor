@@ -1,0 +1,140 @@
+﻿@page "/piaf2opcua"
+@using PIAF_Interop
+@using System.Text
+@inject IJSRuntime JS
+
+<div class="row">
+    <div class="col-12">
+        <h1 class="pb-2 pt-2 text-center">PI-AF 2 OPC UA</h1>
+    </div>
+</div>
+
+<div class="row">
+
+    <div class="col-4 pl-4">
+        <div class="card mt-3" style="max-height: 60rem;">
+            <div class="card-header">
+                <h4>
+                    Import Types from XML
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="card-title">
+                    <label class="text-reader">
+                        <InputFile OnChange="@LoadFile" />
+                        <button hidden @onclick="DownloadText">Download text file</button>
+                    </label>
+
+                </div>
+                <div class="list-group" style="max-height: 54rem; overflow-y:auto;">
+                    @foreach (var aAfElementTemplate in afElementTemplates)
+                    {
+
+                        <button class="list-group-item list-group-item-action @(activeTemplate == null ? "" : (activeTemplate==aAfElementTemplate ? "active" : ""))"
+                            @onclick="() => SetActiveTemplate(aAfElementTemplate)">
+                            @aAfElementTemplate.Name
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-8 pr-4">
+        @if (activeTemplate != null)
+        {
+            <div class="card mt-3" style="max-height: 60rem; width: 100%">
+                <div class="card-body">
+                    <div class="card-title">
+                        Name: @activeTemplate.Name<br />
+                        BaseType: @(activeTemplateBaseTypeString == null ? "n/a" : activeTemplateBaseTypeString)<br />
+                    </div>
+                    <div class="card-text">
+                        Description: @activeTemplate.Description<br />
+                        <div class="row">
+                            <div class="col-4">
+                                <br />
+                                Attributes:<br />
+                                <div class="list-group" style="max-height: 49rem; overflow-y:auto;">
+                                    @if (activeTemplate.AFAttributeTemplate != null)
+                                    {
+                                        foreach (var aAfAttribute in activeTemplate.AFAttributeTemplate)
+                                        {
+                                            <button class="list-group-item list-group-item-action @(activeAttribute == null ? "" : (activeAttribute==aAfAttribute ? "active" : ""))"
+                                        @onclick="() => SetActiveAttribute(aAfAttribute)">
+                                                @aAfAttribute.Name
+                                            </button>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-8">
+                                @if (activeAttribute != null)
+                                {
+                                    <div>
+                                        <br />
+                                        Attribute Settings:<br /><br />
+                                        Name: @activeAttribute.Name<br />
+                                        Description: @activeAttribute.Description<br />
+                                        Data Type: @activeAttribute.Type<br />
+                                        UoM: @activeAttribute.DefaultUOM<br />
+                                        Ref:  @(activeAttribute.DataReference == null ? "n/a" : activeAttribute.DataReference.Value)<br />
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+
+@code {
+
+    afEntry afEntry = new PIAF_Interop.afEntry();
+    List<AFElementTemplate> afElementTemplates
+    {
+        get
+        {
+            return afEntry.afModel == null ? new List<AFElementTemplate>() : afEntry.afElementTemplates;
+        }
+    }
+    AFElementTemplate? activeTemplate { get; set; }
+    string? activeTemplateBaseTypeString
+    {
+        get
+        {
+            return afEntry.GetAFElementTemplateBaseTypeString(activeTemplate);
+        }
+    }
+    void SetActiveTemplate(AFElementTemplate aAfElementTemplate)
+    {
+        activeAttribute = null;
+        activeTemplate = aAfElementTemplate;
+    }
+    AFAttributeTemplate? activeAttribute { get; set; }
+    void SetActiveAttribute(AFAttributeTemplate aAfAttribute)
+    {
+        activeAttribute = aAfAttribute;
+    }
+
+    async Task LoadFile(InputFileChangeEventArgs e)
+    {
+        activeAttribute = null;
+        activeTemplate = null;
+        var reader = await new StreamReader(e.File.OpenReadStream(10000000)).ReadToEndAsync();
+        afEntry.ReadString(reader);
+
+    }
+
+    //https://www.meziantou.net/generating-and-downloading-a-file-in-a-blazor-webassembly-application.htm
+    async Task DownloadText()
+    {
+        // Generate a text file
+        byte[] file = Encoding.UTF8.GetBytes("stuff");
+        await JS.InvokeVoidAsync("BlazorDownloadFile", "file.txt", "text/plain", file);
+    }
+}

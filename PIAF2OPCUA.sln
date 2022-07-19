@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PIAF_Interop.Test", "PIAF_I
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Convert_PIAF2OPCUA", "Convert_PIAF2OPCUA\Convert_PIAF2OPCUA.csproj", "{7B253F25-C290-490C-B23B-56051BB75A58}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PIAF2OPCUA_WebUI", "PIAF2OPCUA_WebUI\PIAF2OPCUA_WebUI.csproj", "{93718716-2F8C-4621-B021-9389D2DDDDF2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{7B253F25-C290-490C-B23B-56051BB75A58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B253F25-C290-490C-B23B-56051BB75A58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B253F25-C290-490C-B23B-56051BB75A58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93718716-2F8C-4621-B021-9389D2DDDDF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93718716-2F8C-4621-B021-9389D2DDDDF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93718716-2F8C-4621-B021-9389D2DDDDF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93718716-2F8C-4621-B021-9389D2DDDDF2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

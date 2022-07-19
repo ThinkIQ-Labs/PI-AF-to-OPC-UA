@@ -5,7 +5,8 @@ using System.Xml;
 using UAOOI.SemanticData.UAModelDesignExport.XML;
 
 afEntry afEntry = new afEntry();
-afEntry.fileUrl = "./data/element templates.xml";
+//afEntry.fileUrl = "./data/element templates.xml";
+afEntry.fileUrl = @"C:\\Users\\GregorVilkner\\source\\repos\\SMIP2PIAF\\AF Sample Files\\Alone_Refridgerator with Water Dispenser - Copy.xml";
 afEntry.ReadFile();
 
 uaModelDesign md = new uaModelDesign("https://thinkiq.com/UA", "fridge");

@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using System.Text;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace PIAF_Interop
@@ -11,7 +12,13 @@ namespace PIAF_Interop
         public List<AFElementTemplate> afElementTemplates {
             get
             {
-                return afModel.Items.Where(x => x.GetType() == typeof(AFElementTemplate)).Cast<AFElementTemplate>().ToList();
+                if(afModel.ExportedType== "AFDatabase")
+                {
+                    return (afModel.Items.First() as AFDatabase).Items.Where(x => x.GetType() == typeof(AFElementTemplate)).Cast<AFElementTemplate>().ToList();
+                } else
+                {
+                    return afModel.Items.Where(x => x.GetType() == typeof(AFElementTemplate)).Cast<AFElementTemplate>().ToList();
+                }
             }
         }
 
@@ -28,6 +35,15 @@ namespace PIAF_Interop
             var aSerializer = new XmlSerializer(typeof(AF));
             var aFileStream = new FileStream(fileUrl, FileMode.Open);
             afModel = (AF)aSerializer.Deserialize(aFileStream);
+        }
+
+        public void ReadString(string xml)
+        {
+            var aSerializer = new XmlSerializer(typeof(AF));
+            using (var reader = new StringReader(xml))
+            {
+                afModel = (AF)aSerializer.Deserialize(reader);
+            }
         }
 
     }
