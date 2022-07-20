@@ -1,6 +1,7 @@
-﻿@page "/piaf2opcua"
+﻿@page "/"
 @using PIAF_Interop
 @using System.Text
+@using ua.model.sdk.Model
 @inject IJSRuntime JS
 
 <div class="row">
@@ -22,10 +23,19 @@
                 <div class="card-title">
                     <label class="text-reader">
                         <InputFile OnChange="@LoadFile" />
-                        <button hidden @onclick="DownloadText">Download text file</button>
                     </label>
-
-                </div>
+                    @if (isLoading)
+                    {
+                        <p>loading...</p>
+                    }
+                </div><hr />
+                <div class="card-title">
+                    <EditForm Model="@newMd" OnValidSubmit="@CreateNewMd">
+                        <label>Domain</label><InputText @bind-Value="newMd.mdDomain"></InputText><br />
+                        <label>Name</label><InputText @bind-Value="newMd.mdName"></InputText><br />
+                        <button type="submit" style="padding: 0.2em; border: thin solid grey; border-radius: 3px;">ModelDesign</button>
+                   </EditForm>
+                </div><hr />
                 <div class="list-group" style="max-height: 54rem; overflow-y:auto;">
                     @foreach (var aAfElementTemplate in afElementTemplates)
                     {
@@ -44,6 +54,11 @@
         @if (activeTemplate != null)
         {
             <div class="card mt-3" style="max-height: 60rem; width: 100%">
+                <div class="card-header">
+                    <h4>
+                        Element Template Data
+                    </h4>
+                </div>
                 <div class="card-body">
                     <div class="card-title">
                         Name: @activeTemplate.Name<br />
@@ -94,7 +109,30 @@
 
 @code {
 
+
+    public class NewMd
+    {
+        public string mdDomain{ get; set; }
+        public string mdName{ get; set; }
+        public NewMd()
+        {
+
+        }
+    }
+
+    bool isLoading = false;
+
     afEntry afEntry = new PIAF_Interop.afEntry();
+
+    NewMd newMd = new NewMd();
+
+    void CreateNewMd()
+    {
+        md = new uaModelDesign(newMd.mdDomain, newMd.mdName);
+    }
+
+    uaModelDesign md { get; set; }
+
     List<AFElementTemplate> afElementTemplates
     {
         get
@@ -123,11 +161,13 @@
 
     async Task LoadFile(InputFileChangeEventArgs e)
     {
+        isLoading = true;
+        afEntry = new PIAF_Interop.afEntry();
         activeAttribute = null;
         activeTemplate = null;
         var reader = await new StreamReader(e.File.OpenReadStream(10000000)).ReadToEndAsync();
         afEntry.ReadString(reader);
-
+        isLoading = false;
     }
 
     //https://www.meziantou.net/generating-and-downloading-a-file-in-a-blazor-webassembly-application.htm

@@ -2,7 +2,7 @@
 using ua.model.sdk.Managers;
 using ua.model.sdk.Model;
 using System.Xml;
-using UAOOI.SemanticData.UAModelDesignExport.XML;
+using ModelCompiler;
 
 afEntry afEntry = new afEntry();
 //afEntry.fileUrl = "./data/element templates.xml";

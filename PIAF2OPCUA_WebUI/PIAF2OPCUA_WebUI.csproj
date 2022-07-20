@@ -17,12 +17,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
+    <Reference Include="ua.model.sdk">
+      <HintPath>..\..\UA-Model-SDK\ua.model.sdk\bin\Debug\net6.0\ua.model.sdk.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
-    <TrimmerRootAssembly Include="System.Private.Xml" />
-    <TrimmerRootDescriptor Include="LinkerWorkaround.xml" />
+    <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
   </ItemGroup>
 
   <ItemGroup>
