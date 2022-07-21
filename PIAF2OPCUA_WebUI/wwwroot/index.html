@@ -12,6 +12,7 @@
     <link href="manifest.json" rel="manifest" />
     <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
     <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
+    <link href="_content/Blazored.Modal/blazored-modal.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -57,6 +58,16 @@
             URL.revokeObjectURL(exportUrl);
         }
     </script>
+
+    <script src="_content/Blazored.Modal/blazored.modal.js"></script>
+
+    <script type="text/javascript">
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+
 </body>
 
 </html>

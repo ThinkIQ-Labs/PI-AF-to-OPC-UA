@@ -1,12 +1,13 @@
 ﻿@page "/"
+@using ModelCompiler
 @using PIAF_Interop
 @using System.Text
-@using ua.model.sdk.Model
-@inject IJSRuntime JS
+@using System.ComponentModel.DataAnnotations
+@using System.Xml
 
 <div class="row">
     <div class="col-12">
-        <h1 class="pb-2 pt-2 text-center">PI-AF 2 OPC UA</h1>
+        <h2 class="pb-2 pt-2 text-center">Create OPC UA Nodeset From Aveva PI AF Element Templates</h2>
     </div>
 </div>
 
@@ -14,6 +15,35 @@
 
     <div class="col-4 pl-4">
         <div class="card mt-3" style="max-height: 60rem;">
+            <div class="card-header">
+                <h4>
+                    OPC UA Model
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="card-title">
+                    <EditForm Model="@newMd" OnValidSubmit="@CreateNewMd">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+                        <label class="my-1" style="width:80px">Domain</label><InputText @bind-Value="newMd.mdDomain" placeholder="https://acme.com/UA"></InputText><br />
+                        <label class="my-1" style="width:80px">Name</label><InputText @bind-Value="newMd.mdName" placeholder="motor"></InputText><br />
+                        <button type="submit" class="btn mt-3 mr-4" style="padding: 0.2em; border: thin solid grey; border-radius: 3px;background-color: #efefef;">
+                            @if (md == null) {
+                                <span>New UA Model</span>
+                            } else
+                            {
+                                <span>Update Namespace</span>
+                            }
+                        </button>
+                        @if (md != null)
+                        {
+                            <button type="button" class="btn btn-link ml-4 mt-3" @onclick="ShowModelDesignModal">View Model XML</button>
+                        }
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+        <div class="card mt-3" style="max-height: 46rem;">
             <div class="card-header">
                 <h4>
                     Import Types from XML
@@ -28,22 +58,56 @@
                     {
                         <p>loading...</p>
                     }
-                </div><hr />
-                <div class="card-title">
-                    <EditForm Model="@newMd" OnValidSubmit="@CreateNewMd">
-                        <label>Domain</label><InputText @bind-Value="newMd.mdDomain"></InputText><br />
-                        <label>Name</label><InputText @bind-Value="newMd.mdName"></InputText><br />
-                        <button type="submit" style="padding: 0.2em; border: thin solid grey; border-radius: 3px;">ModelDesign</button>
-                   </EditForm>
-                </div><hr />
-                <div class="list-group" style="max-height: 54rem; overflow-y:auto;">
-                    @foreach (var aAfElementTemplate in afElementTemplates)
+                </div>
+                @if (afElementTemplates.Count > 0)
+                {
+                    <hr />
+                }
+                <div class="list-group" style="max-height: 36rem; overflow-y:auto;">
+                    @foreach (var aAfType in afTypes)
                     {
+                        <div class="list-group">
+                            <button class="list-group-item list-group-item-action @(activeTemplate == null ? "" : (activeTemplate==aAfType ? "active" : ""))"
+                                @onclick="() => SetActiveTemplate(aAfType)">
+                                @aAfType.Name
+                                @if (aAfType.isSelected)
+                                {
+                                    if (aAfType.canBeRemoved)
+                                    {
+                                        <span class="oi oi-trash" aria-hidden="true" style="float:right;cursor:pointer;" @onclick="()=>ChangeTypeSpecified(aAfType)"></span>
+                                    }
+                                    else
+                                    {
+                                        <span class="oi oi-trash" aria-hidden="true" style="float:right;cursor:not-allowed;" 
+                                            data-toggle="tooltip" data-placement="right" title="Other element types depend on this."></span>
+                                    }
 
-                        <button class="list-group-item list-group-item-action @(activeTemplate == null ? "" : (activeTemplate==aAfElementTemplate ? "active" : ""))"
-                            @onclick="() => SetActiveTemplate(aAfElementTemplate)">
-                            @aAfElementTemplate.Name
-                        </button>
+                                    @if (aAfType.isSelected)
+                                    {
+                                        <span class="oi oi-circle-check" aria-hidden="true" style="float:right;width:20px;"></span>
+                                    }
+                                }
+                                else
+                                {
+                                    if (md == null)
+                                    {
+                                        <span class="oi oi-plus" aria-hidden="true" style="float:right;cursor:not-allowed;" 
+                                                data-toggle="tooltip" data-placement="right" title="You must create a UA model first."></span>
+
+                                    } else{
+                                        if (aAfType.canBeAdded)
+                                        {
+                                            <span class="oi oi-plus" aria-hidden="true" style="float:right;cursor:pointer;" @onclick="()=>ChangeTypeSpecified(aAfType)"></span>
+                                        }
+                                        else
+                                        {
+                                            <span class="oi oi-plus" aria-hidden="true" style="float:right;cursor:not-allowed;"
+                                                data-toggle="tooltip" data-placement="right" title="You must add the BaseType (@aAfType.BaseTemplateString) to the UA model first."></span>
+                                        }
+                                    }
+                                }
+                            </button>
+                        </div>
                     }
                 </div>
             </div>
@@ -62,18 +126,18 @@
                 <div class="card-body">
                     <div class="card-title">
                         Name: @activeTemplate.Name<br />
-                        BaseType: @(activeTemplateBaseTypeString == null ? "n/a" : activeTemplateBaseTypeString)<br />
+                        BaseType: @(activeTemplate.BaseTemplateString == null ? "n/a" : activeTemplate.BaseTemplateString)<br />
                     </div>
                     <div class="card-text">
-                        Description: @activeTemplate.Description<br />
+                        Description: @activeTemplate.Template.Description<br />
                         <div class="row">
                             <div class="col-4">
                                 <br />
                                 Attributes:<br />
                                 <div class="list-group" style="max-height: 49rem; overflow-y:auto;">
-                                    @if (activeTemplate.AFAttributeTemplate != null)
+                                    @if (activeTemplate.Template.AFAttributeTemplate != null)
                                     {
-                                        foreach (var aAfAttribute in activeTemplate.AFAttributeTemplate)
+                                        foreach (var aAfAttribute in activeTemplate.Template.AFAttributeTemplate)
                                         {
                                             <button class="list-group-item list-group-item-action @(activeAttribute == null ? "" : (activeAttribute==aAfAttribute ? "active" : ""))"
                                         @onclick="() => SetActiveAttribute(aAfAttribute)">
@@ -109,12 +173,129 @@
 
 @code {
 
+    string? uaNamespace {
+        get{
+            return md?.uaNameSpaces["OpcUa"].NameSpace.Value;
+        }
+    }
+    string? newNamespace {
+        get{
+            return md?.uaNameSpaces[newMd.mdName].NameSpace.Value;
+        }
+    }
 
+
+    void ChangeTypeSpecified(AfType aAfTemplate)
+    {
+        if (md == null) return;
+
+
+        aAfTemplate.isSelected = !aAfTemplate.isSelected;
+
+        if (aAfTemplate.isSelected)
+        {
+            var aType = md.uaObjectTypeDesignManager.AddBasicObjectTypeDesign(
+                new XmlQualifiedName(aAfTemplate.Name.Replace(" ", "_"), newNamespace),
+                new XmlQualifiedName("BaseObjectType", uaNamespace));
+
+            if (aAfTemplate.BaseTemplate != null)
+            {
+                aType.ObjectTypeDesign.BaseType = new XmlQualifiedName(aAfTemplate.BaseTemplate.Name, newNamespace);
+            }
+            aType.ObjectTypeDesign.Description = new LocalizedText()
+                {
+                    Key = "en-US",
+                    Value = aAfTemplate.Template.Description
+                };
+
+            foreach (var aAfAttribute in aAfTemplate.Template.AFAttributeTemplate)
+            {
+                var aProperty = aType.uaPropertyDesignManager.AddBasicPropertyDesign(
+                    new XmlQualifiedName(aAfAttribute.Name, newNamespace),
+                    new XmlQualifiedName(aAfAttribute.Type, uaNamespace)
+                    );
+                aProperty.PropertyDesign.Description = new LocalizedText()
+                    {
+                        Key = "en-US",
+                        Value = aAfAttribute.Description
+                    };
+            }
+
+            // after adding the type all types based on it can also be added
+            foreach (var aAfType in afTypes.Where(x => x.BaseTemplate != null).Where(x => x.BaseTemplate.Name == aAfTemplate.Name))
+            {
+                aAfType.canBeAdded = true;
+            }
+
+            // after adding the type this type can be removed
+            aAfTemplate.canBeRemoved = true;
+
+            // if this type is has a basetype that base type can't be removed
+            if (aAfTemplate.BaseTemplate != null)
+            {
+                afTypes.Find(x => x.Name == aAfTemplate.BaseTemplate.Name).canBeRemoved = false;
+            }
+        }
+        else
+        {
+            List<uaObjectTypeDesign> aList = md.uaObjectTypeDesigns;
+            var locIndex = md.uaObjectTypeDesigns.FindIndex(x => x.ObjectTypeDesign.SymbolicName.Name == aAfTemplate.Name.Replace(" ", "_"));
+            aList.RemoveAt(locIndex);
+            NodeDesign[] array = aList.Select(x => x.ObjectTypeDesign).ToArray();
+            md.ModelDesign.Items = array;
+
+            // now the basetype can be removed
+            if (aAfTemplate.BaseTemplate != null)
+            {
+                afTypes.Find(x => x.Name == aAfTemplate.BaseTemplate.Name).canBeRemoved = true;
+            }
+
+            // if other things are based on this they can't be added
+            foreach (var aAfType in afTypes.Where(x => x.BaseTemplate != null).Where(x => x.BaseTemplate.Name == aAfTemplate.Name))
+            {
+                aAfType.canBeAdded = false;
+            }
+        }
+
+    }
+    [CascadingParameter] public IModalService Modal { get; set; }
+    void ShowModelDesignModal()
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(ModelDesignPreview.md), md);
+
+        Modal.Show<ModelDesignPreview>("OPC UA Model", parameters);
+    }
     public class NewMd
     {
-        public string mdDomain{ get; set; }
-        public string mdName{ get; set; }
+        [Required(ErrorMessage = "Namespace Domain is required")]
+        public string? mdDomain { get; set; }
+
+        [Required(ErrorMessage = "Namespace Name is required")]
+        public string? mdName { get; set; }
+
         public NewMd()
+        {
+
+        }
+    }
+    List<AfType> afTypes = new List<AfType>();
+    public class AfType
+    {
+        public string Name
+        {
+            get
+            {
+                return Template.Name;
+            }
+        }
+        public AFElementTemplate Template { get; set; }
+        public AFElementTemplate BaseTemplate { get; set; }
+        public string? BaseTemplateString { get; set; }
+        public bool canBeAdded { get; set; }
+        public bool canBeRemoved { get; set; }
+        public bool isSelected { get; set; }
+        public AfType()
         {
 
         }
@@ -128,7 +309,29 @@
 
     void CreateNewMd()
     {
-        md = new uaModelDesign(newMd.mdDomain, newMd.mdName);
+        if (md == null)
+        {
+            md = new uaModelDesign(newMd.mdDomain, newMd.mdName);
+        }
+        else
+        {
+            // keep items
+            var items = md.ModelDesign.Items;
+            md = new uaModelDesign(newMd.mdDomain, newMd.mdName);
+            md.ModelDesign.Items = items;
+            // go through items and fix namespaces
+            if (md.ModelDesign.Items != null)
+            {
+                foreach (var aObjectType in md.ModelDesign.Items)
+                {
+                    aObjectType.SymbolicName = new XmlQualifiedName(aObjectType.SymbolicName.Name, newNamespace);
+                    foreach (var aAttribute in aObjectType.Children.Items)
+                    {
+                        aAttribute.SymbolicName = new XmlQualifiedName(aAttribute.SymbolicName.Name, newNamespace);
+                    }
+                }
+            }
+        }
     }
 
     uaModelDesign md { get; set; }
@@ -137,18 +340,14 @@
     {
         get
         {
-            return afEntry.afModel == null ? new List<AFElementTemplate>() : afEntry.afElementTemplates;
+            if (afEntry == null) return new List<AFElementTemplate>();
+            if (afEntry.afModel == null) return new List<AFElementTemplate>();
+            return afEntry.afElementTemplates;
         }
     }
-    AFElementTemplate? activeTemplate { get; set; }
-    string? activeTemplateBaseTypeString
-    {
-        get
-        {
-            return afEntry.GetAFElementTemplateBaseTypeString(activeTemplate);
-        }
-    }
-    void SetActiveTemplate(AFElementTemplate aAfElementTemplate)
+    AfType? activeTemplate { get; set; }
+
+    void SetActiveTemplate(AfType aAfElementTemplate)
     {
         activeAttribute = null;
         activeTemplate = aAfElementTemplate;
@@ -168,13 +367,24 @@
         var reader = await new StreamReader(e.File.OpenReadStream(10000000)).ReadToEndAsync();
         afEntry.ReadString(reader);
         isLoading = false;
+        afTypes = new List<AfType>();
+        if (md != null)
+        {
+            md.ModelDesign.Items = new NodeDesign[] { };
+        }
+        foreach (var aAfTemplate in afEntry.afElementTemplates)
+        {
+            AfType newType = new AfType
+                {
+                    Template = aAfTemplate,
+                    isSelected = false,
+                    BaseTemplateString=afEntry.GetAFElementTemplateBaseTypeString(aAfTemplate)
+                };
+
+            newType.BaseTemplate = afEntry.afElementTemplates.FirstOrDefault(x => x.Name == newType.BaseTemplateString);
+            newType.canBeAdded = newType.BaseTemplateString == null ? true : false;
+            afTypes.Add(newType);
+        }
     }
 
-    //https://www.meziantou.net/generating-and-downloading-a-file-in-a-blazor-webassembly-application.htm
-    async Task DownloadText()
-    {
-        // Generate a text file
-        byte[] file = Encoding.UTF8.GetBytes("stuff");
-        await JS.InvokeVoidAsync("BlazorDownloadFile", "file.txt", "text/plain", file);
-    }
 }
