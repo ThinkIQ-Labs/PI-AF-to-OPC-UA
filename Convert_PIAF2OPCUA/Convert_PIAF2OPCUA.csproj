@@ -8,10 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OOI.ModelCompiler" Version="3.1.1" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\PIAF_Interop\PIAF_Interop.csproj" />
   </ItemGroup>
 
