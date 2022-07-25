@@ -1,0 +1,76 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@namespace PIAF2OPCUA_WebUI.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="~/" />
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+    <link href="css/site.css" rel="stylesheet" />
+    <link href="PIAF2OPCUA_WebUI.styles.css" rel="stylesheet" />
+    <link href="_content/Blazored.Modal/blazored-modal.css" rel="stylesheet" />
+    <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
+</head>
+<body>
+    @RenderBody()
+
+    <div id="blazor-error-ui">
+        <environment include="Staging,Production">
+            An error has occurred. This application may no longer respond until reloaded.
+        </environment>
+        <environment include="Development">
+            An unhandled exception has occurred. See browser dev tools for details.
+        </environment>
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+
+    <script src="_framework/blazor.server.js"></script>
+
+        <script>
+        window.downloadFileFromStream = async (fileName, contentStreamReference) => {
+            const arrayBuffer = await contentStreamReference.arrayBuffer();
+            const blob = new Blob([arrayBuffer]);
+            const url = URL.createObjectURL(blob);
+            const anchorElement = document.createElement('a');
+            anchorElement.href = url;
+            anchorElement.download = fileName ?? '';
+            anchorElement.click();
+            anchorElement.remove();
+            URL.revokeObjectURL(url);
+        }
+
+        // Use it for .NET 6+
+        function BlazorDownloadFile(filename, contentType, content) {
+            // Create the URL
+            const file = new File([content], filename, { type: contentType });
+            const exportUrl = URL.createObjectURL(file);
+
+            // Create the <a> element and click on it
+            const a = document.createElement("a");
+            document.body.appendChild(a);
+            a.href = exportUrl;
+            a.download = filename;
+            a.target = "_self";
+            a.click();
+
+            // We don't need to keep the object URL, let's release the memory
+            // On older versions of Safari, it seems you need to comment this line...
+            URL.revokeObjectURL(exportUrl);
+        }
+    </script>
+
+    <script src="_content/Blazored.Modal/blazored.modal.js"></script>
+
+    <script type="text/javascript">
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+
+</body>
+</html>

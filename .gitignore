@@ -348,3 +348,4 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+/PIAF2OPCUA_WebUI/Properties/ServiceDependencies/PIAF2OPCUAWebUI - Web Deploy/profile.arm.json

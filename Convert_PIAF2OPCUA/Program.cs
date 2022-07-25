@@ -47,11 +47,11 @@ foreach (var aAfTemplate in afEntry.afElementTemplates)
 var dirInfo = Directory.CreateDirectory("./out");
 
 var xmlFileUrl = $"{dirInfo.FullName}\\test2.xml";
-string aXmlFileContent = md.GenerateXML(xmlFileUrl);
+string aXmlFileContent = md.GenerateModelXML(xmlFileUrl);
 Console.WriteLine(aXmlFileContent);
 
 var csvFileUrl = $"{dirInfo.FullName}\\test2.csv";
-string aCsvFileContent = md.GenerateCSV(csvFileUrl);
+string aCsvFileContent = md.GenerateModelCSV(csvFileUrl);
 Console.WriteLine(aCsvFileContent);
 
 var compilerExecutable = @"C:\Users\public\source\repos\UA-ModelCompiler\build\bin\Debug\net6.0\Opc.Ua.ModelCompiler.exe";

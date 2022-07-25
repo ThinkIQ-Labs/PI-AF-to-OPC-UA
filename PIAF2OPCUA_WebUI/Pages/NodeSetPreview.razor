@@ -1,0 +1,52 @@
+﻿@using System.Text
+@using Newtonsoft.Json.Linq
+@inject IJSRuntime JS
+
+<div>
+    <textarea style="width:800px" rows="25" readonly>@xml</textarea>
+</div>
+<div>
+    <button style="float:right" class="btn btn-secondary" @onclick="SaveXML">Save .xml</button>
+</div>
+@code {
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
+
+    [Parameter] public ModelDesign md { get; set; }
+
+    string? xml{ get; set; }
+
+    async Task<string> GetNodeSetXml() {
+        //var modelxml = md.GenerateModelXML();
+        //var jobject = new JObject();
+        //jobject["xml"] = modelxml;
+        //var json = Newtonsoft.Json.JsonConvert.SerializeObject(jobject);
+
+        //HttpClient aClient = new HttpClient();
+        //aClient.BaseAddress = new Uri($"https://{FunctionNamespace}.azurewebsites.net");
+        //HttpContent httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+
+        //var response = await aClient.PostAsync($"api/{FunctionName}?code={FunctionKey}", httpContent);
+        //var result = await response.Content.ReadAsStringAsync();
+
+        var result = md.GenerateNodesetXML();
+
+        return result;        
+    }
+
+    async Task SaveXML()
+    {
+        //https://www.meziantou.net/generating-and-downloading-a-file-in-a-blazor-webassembly-application.htm
+        // Generate a text file
+        byte[] file = Encoding.UTF8.GetBytes(xml);
+        await JS.InvokeVoidAsync("BlazorDownloadFile", "ModelDesign.xml", "text/plain", file);
+    }
+
+    protected override async void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            xml = await GetNodeSetXml();
+            StateHasChanged();
+        }
+    }
+}
