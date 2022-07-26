@@ -1,8 +1,11 @@
 ﻿@page "/"
+@using Opc.Ua
 @using PIAF_Interop
 @using System.Text
 @using System.ComponentModel.DataAnnotations
 @using System.Xml
+@using LocalizedTextOpcUa=Opc.Ua.LocalizedText
+@using LocalizedTextModelDesign=ua.model.sdk.Model.LocalizedText
 
 <div class="row">
     <div class="col-12">
@@ -202,7 +205,7 @@
             {
                 aType.BaseType = new XmlQualifiedName(aAfTemplate.BaseTemplate.Name, newNamespace);
             }
-            aType.Description = new LocalizedText()
+            aType.Description = new LocalizedTextModelDesign()
                 {
                     Key = "en-US",
                     Value = aAfTemplate.Template.Description
@@ -210,15 +213,55 @@
 
             foreach (var aAfAttribute in aAfTemplate.Template.AFAttributeTemplate)
             {
-                var aProperty = aType.PropertyDesignsAdd(
-                    new XmlQualifiedName(aAfAttribute.Name, newNamespace),
-                    new XmlQualifiedName(aAfAttribute.Type, uaNamespace)
+                if (aAfAttribute.DefaultUOM != null)
+                {
+                    var aVariable = aType.VariableDesignsAdd(
+                        new XmlQualifiedName(aAfAttribute.Name, newNamespace),
+                        new XmlQualifiedName(aAfAttribute.Type, uaNamespace)
+                        );
+                    aVariable.Description = new LocalizedTextModelDesign()
+                        {
+                            Key = "en-US",
+                            Value = aAfAttribute.Description
+                        };
+                    var propEU = aVariable.PropertyDesignsAdd(
+                        new XmlQualifiedName("EngineeringUnits", newNamespace),
+                        new XmlQualifiedName("EUInformation", uaNamespace)
                     );
-                aProperty.Description = new LocalizedText()
+                    EUInformation eui = EUInformation.EUInformationList.FirstOrDefault(x => x.DisplayName.Text == aAfAttribute.DefaultUOM);
+                    if (eui == null)
                     {
-                        Key = "en-US",
-                        Value = aAfAttribute.Description
-                    };
+                        eui = new EUInformation
+                        {
+                            DisplayName = new LocalizedTextOpcUa
+                            {
+                                Locale = "en-US",
+                                Text = aAfAttribute.DefaultUOM
+                            },
+                            Description = new LocalizedTextOpcUa
+                            {
+                                Locale = "en-US",
+                                Text = $"EU conversion error: {aAfAttribute.DefaultUOM} was not found in the UA unit catalog."
+                            }
+                        };
+                    }
+                    propEU.DefaultValue = eui.CreateXmlElement();
+
+
+                }
+                else
+                {
+                    var aProperty = aType.PropertyDesignsAdd(
+                        new XmlQualifiedName(aAfAttribute.Name, newNamespace),
+                        new XmlQualifiedName(aAfAttribute.Type, uaNamespace)
+                        );
+                    aProperty.Description = new LocalizedTextModelDesign()
+                        {
+                            Key = "en-US",
+                            Value = aAfAttribute.Description
+                        };
+
+                }
             }
 
             // after adding the type all types based on it can also be added
