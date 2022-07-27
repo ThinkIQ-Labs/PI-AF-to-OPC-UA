@@ -36,7 +36,7 @@ Only few basic features of the rich set of OPC UA object types and namespaces ar
 
 - Element Templates are modeled as BaseObjectType.
 - Element Templates that are based on another Element Template are modeled the same way. It is thus required to "work your way up", Templates are only allowed to be added to an Information Model once the dependency exists.
-- Attribute Templates are modeled either as variables or as properties.
+- Attribute Templates are modeled either as BaseDataVariableType or as PropertyType.
 - Time series attributes and attributes that are numeric are modeled as variables, so engineering units can be attached.
 - Engineering Units are captured in a property called "EngineeringUnits" based on the EUInformation type, that leverages the UNICE library of engineering units. If the DefaultUoM doesn't match, we show an exception message.
 - Since AF does not allow nested element types, it is not possible to create complex types that encapsulate nameplate metadata such as the MachineIdentificationType.
@@ -61,7 +61,7 @@ Only few basic features of the rich set of OPC UA object types and namespaces ar
 - Default UoM - is captured and validated against OPC UA engineering units.
 - Default Value - is captured.
 - Display Digits - omitted. This is AF specific.
-- Data Reference - only <none> (for static attributes) and PI Point (for tags) are captured.
+- Data Reference - PI Point attributes will be marked for Historizing.
 
 ### Value Type Mapping
 
