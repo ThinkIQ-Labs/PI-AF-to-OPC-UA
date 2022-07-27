@@ -65,15 +65,6 @@ Only few basic features of the rich set of OPC UA object types and namespaces ar
 
 ### Value Type Mapping
 
-Only basic types are captured. We omit array types, enums, and AF object references. 
-
-AF types are mapped to SMIP types as follows:
-
-- Boolean - bool
-- Byte, Int16, Int32, Int64 - integer
-- Single, Double - float
-- String - string
-- GUID - string
-- DateTime - DateTime
+All data types supported by AF are available in OPC UA.
 
 
