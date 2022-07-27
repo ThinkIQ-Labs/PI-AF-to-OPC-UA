@@ -5,6 +5,23 @@ This project leverages XML interoperability standards to allow creation of OPC U
 ![Screenshot](./images/af2ua_screenshot.png)
 <p align = "center"><b>Fig.1 - Screenshot of UI to Import and Browse AF Element Templates</b></p>
 
+First, we create a new UA Model by entering a domain and name. The program automatically references the typical basic OPC UA namespaces for us. For instance, "ht<span>tps://</span>acme.com/UA" and "refridgerators" will result in the following OPC UA design model:
+
+``` xml
+<?xml version="1.0" encoding="utf-16"?>
+<ModelDesign xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:uax="http://opcfoundation.org/UA/2008/02/Types.xsd" xmlns:ua="http://opcfoundation.org/UA/" xmlns:refridgerator="https://acme.com/refridgerator/" TargetNamespace="https://acme.com/refridgerator/" TargetXmlNamespace="https://acme.com/refridgerator/" xmlns="http://opcfoundation.org/UA/ModelDesign.xsd">
+  <Namespaces>
+    <Namespace Name="OpcUa" Prefix="Opc.Ua" InternalPrefix="Opc.Ua.Server" XmlNamespace="http://opcfoundation.org/UA/2008/02/Types.xsd" XmlPrefix="OpcUa" Version="1.03" PublicationDate="2013-12-02T00:00:00Z">http://opcfoundation.org/UA/</Namespace>
+    <Namespace Name="refridgerator" Prefix="refridgerator" XmlNamespace="https://acme.com/refridgerator/Types.xsd" XmlPrefix="refridgerator">https://acme.com/refridgerator/</Namespace>
+  </Namespaces>
+</ModelDesign>
+```
+
+Once we load an XML file with AF element templates, we can add element templates as BasicObjectTypes to the OPC UA design model by using the "+" icons next to the element template names. Element templates can be removed from the model design the same way. At any time, we can preview and save the generated ModelDesign.xml text. We can also compile a Nodeset.xml - this action is performed on the server utilizing the OPC UA model compiler library.
+
+![Screenshot](./images/af2ua_model_preview_screenshot.png)
+<p align = "center"><b>Fig.2 - Preview and Save ModelDesign and Nodeset XML Files</b></p>
+
 ## Modeling Techniques Supported in PI AF 
 
 PI AF offers 2 basic types of objects that models are based upon: elements and attributes, both of which can be nested. Elements can be based on types, Element Templates, which are stored in a model library’s “Element Templates” section. An Element Template can be based of a single other Element Template. This allows inheritance and chaining of dependencies.
