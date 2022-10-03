@@ -26,9 +26,9 @@ Once an XML file with AF element templates is loaded, element templates can be a
 
 ## Modeling Techniques Supported in PI AF 
 
-PI AF offers two basic types of objects that models are based upon: elements and attributes, both of which can be nested. Elements can be based on types, Element Templates, which are stored in a model library’s “Element Templates” section. An Element Template can be based of a single other Element Template. This allows inheritance and chaining of dependencies.
+PI AF models include two basic types of objects: elements and attributes, both of which can be nested. Elements can be based on types, known as Element Templates, which are stored in a model library’s “Element Templates” section. An Element Template can be based on another other Element Template. This allows inheritance and chaining of dependencies.
 
-Even though element instances can be nested, element templates can not be nested, i.e. it is not possible to create composite types. However, within an element template, attribute templates can be nested. For the purpose of exporting AF element templates to OPC UA, one can either disregard nested attributes, or flatten them. Flattening nested attributes would preserve them for usage in the information model, but ultimately change the structure of the type, and possibly create issues with unique naming of sibling attributes.
+Even though element instances can be nested, element templates cannot be nested. This means it is not possible to create composite types. However, within an element template, attribute templates can be nested. For the purpose of exporting AF element templates to OPC UA, one can either disregard nested attributes, or flatten them. Flattening nested attributes would preserve them for usage in the information model, but ultimately change the structure of the type, and possibly create issues with unique naming of sibling attributes.
 
 ## OPC UA Information Model Assumptions
 
