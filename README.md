@@ -34,12 +34,12 @@ Even though element instances can be nested, element templates cannot be nested.
 
 Objects can be added into a newly created namespace. At this time, appending or editing of existing Information Models or Nodesets is not supported. The workflow builds an OPC UA model first (ModelDesign.xsd), and then compiles a Nodeset off it using the OPC UA model compiler.
 
-Only a few basic features of the rich set of OPC UA object types and namespaces are used to effectively campture AF Element Templates:
+These basic features of the rich set of OPC UA object types and namespaces are used to capture AF Element Templates:
 
 - Element Templates are modeled as BaseObjectType.
-- Element Templates that are based on another Element Template are modeled the same way. Thus, it is required to "work your way up", meaning that templates are only allowed to be added to an Information Model once the dependency exists.
+- Element Templates that are based on another Element Template are modeled the same way. Thus, it is required to work from the bottom up, meaning that templates are only allowed to be added to an Information Model once the dependency exists.
 - Attribute Templates are modeled either as BaseDataVariableType or as PropertyType.
-- Time series attributes and attributes that are numeric are modeled as variables, so engineering units can be attached.
+- Time series attributes and numeric attributes are modeled as variables, so engineering units can be attached.
 - Engineering Units are captured in a property called "EngineeringUnits" based on the EUInformation type, which leverages the UNICE library of engineering units. If the DefaultUoM doesn't match, an exception message is shown.
 - Since AF does not allow nested element types, it is not possible to create complex types that encapsulate nameplate metadata such as the MachineIdentificationType.
 - The modeling rule of all properties and variables is set to its default state. This is mandatory. 
