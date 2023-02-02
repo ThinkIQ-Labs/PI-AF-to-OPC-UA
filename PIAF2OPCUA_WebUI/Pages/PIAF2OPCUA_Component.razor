@@ -1,11 +1,4 @@
-﻿@using Opc.Ua
-@using PIAF_Interop
-@using System.Text
-@using System.ComponentModel.DataAnnotations
-@using System.Xml
-@using LocalizedTextOpcUa=Opc.Ua.LocalizedText
-@using LocalizedTextModelDesign=ua.model.sdk.Model.LocalizedText
-
+﻿@inject IJSRuntime JS
 
 <div class="row">
 
@@ -18,32 +11,34 @@
             </div>
             <div class="card-body">
                 <div class="card-title">
-                    <EditForm Model="@newMd" OnValidSubmit="@CreateNewMd">
+                    <EditForm Model="@newNodeSetModel" OnValidSubmit="@CreateNewMd">
                         <DataAnnotationsValidator />
                         <ValidationSummary />
-                        <label class="my-1" style="width:80px">Domain</label><InputText @bind-Value="newMd.mdDomain" placeholder="https://acme.com/UA"></InputText><br />
-                        <label class="my-1" style="width:80px">Name</label><InputText @bind-Value="newMd.mdName" placeholder="motor"></InputText><br />
+                        <label class="my-1" style="width:80px">Domain</label><InputText @bind-Value="newNodeSetModel.mdDomain" placeholder="https://acme.com/UA"></InputText><br />
+                        <label class="my-1" style="width:80px">Name</label><InputText @bind-Value="newNodeSetModel.mdName" placeholder="motor"></InputText><br />
                         <button type="submit" class="btn mt-3 mr-4" style="padding: 0.2em; border: thin solid grey; border-radius: 3px;background-color: #efefef;">
-                            @if (md == null) {
+                            @if (nodeSetModel == null)
+                            {
                                 <span>New UA Model</span>
-                            } else
+                            }
+                            else
                             {
                                 <span>Update Namespace</span>
                             }
                         </button>
-                        @if (md != null)
+                        @if (nodeSetModel != null)
                         {
-                            <button type="button" class="btn btn-link ml-4 mt-3" @onclick="ShowModelDesignModal">View Model XML</button>
-                            <button disabled="@(md.Items==null ? true : (md.Items.Count()==0 ? true : false))" type="button" class="btn btn-link ml-4 mt-3" @onclick="ShowNodeSetModal">View NodeSet XML</button>
+                            <button disabled="@(nodeSetModel.ObjectTypes==null ? true : (nodeSetModel.ObjectTypes.Count()==0 ? true : false))" type="button" class="btn btn-link ml-4 mt-3" @onclick="ShowNodeSetModal">View NodeSet XML</button>
                         }
                     </EditForm>
                 </div>
             </div>
         </div>
+
         <div class="card mt-3" style="max-height: 46rem;">
             <div class="card-header">
                 <h4>
-                    Import Types from XML
+                    Import AF Types from XML
                 </h4>
             </div>
             <div class="card-body">
@@ -56,50 +51,53 @@
                         <p>loading...</p>
                     }
                 </div>
-                @if (afElementTemplates.Count > 0)
+                @if (AfUiTypes.Count > 0)
                 {
                     <hr />
                 }
                 <div class="list-group" style="max-height: 36rem; overflow-y:auto;">
-                    @foreach (var aAfType in afTypes)
+                    @foreach (var aAfUiType in AfUiTypes)
                     {
                         <div class="list-group">
-                            <button class="list-group-item list-group-item-action @(activeTemplate == null ? "" : (activeTemplate==aAfType ? "active" : ""))"
-                                @onclick="() => SetActiveTemplate(aAfType)">
-                                @aAfType.Name
-                                @if (aAfType.isSelected)
+                            <button class="list-group-item list-group-item-action @(activeAfUiType == null ? "" : (activeAfUiType==aAfUiType ? "active" : ""))"
+                                @onclick="() => SetActiveAfUiType(aAfUiType)">
+                                @aAfUiType.Name
+                                @if (aAfUiType.isSelected)
                                 {
-                                    if (aAfType.canBeRemoved)
+                                    if (aAfUiType.canBeRemoved)
                                     {
-                                        <span class="oi oi-trash" aria-hidden="true" style="float:right;cursor:pointer;" @onclick="()=>ChangeTypeSpecified(aAfType)"></span>
+                                        <span class="oi oi-trash" aria-hidden="true" style="float:right;cursor:pointer;" @onclick="()=>ChangeTypeSpecified(aAfUiType)"></span>
                                     }
                                     else
                                     {
-                                        <span class="oi oi-trash" aria-hidden="true" style="float:right;cursor:not-allowed;" 
-                                            data-toggle="tooltip" data-placement="right" title="Other element types depend on this."></span>
+                                        <span class="oi oi-trash" aria-hidden="true" style="float:right;cursor:not-allowed;"
+                                  data-toggle="tooltip" data-placement="right" title="@aAfUiType.canBeRemovedErrorHint"></span>
                                     }
 
-                                    @if (aAfType.isSelected)
+                                    @if (aAfUiType.isSelected)
                                     {
                                         <span class="oi oi-circle-check" aria-hidden="true" style="float:right;width:20px;"></span>
                                     }
                                 }
                                 else
                                 {
-                                    if (md == null)
+                                    if (nodeSetModel == null)
                                     {
-                                        <span class="oi oi-plus" aria-hidden="true" style="float:right;cursor:not-allowed;" 
-                                                data-toggle="tooltip" data-placement="right" title="You must create a UA model first."></span>
+                                        <span class="oi oi-plus" aria-hidden="true" style="float:right;cursor:not-allowed;"
+                                  data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="You must create a UA model first."></span>
 
-                                    } else{
-                                        if (aAfType.canBeAdded)
+                                    }
+                                    else
+                                    {
+                                        if (aAfUiType.canBeAdded)
                                         {
-                                            <span class="oi oi-plus" aria-hidden="true" style="float:right;cursor:pointer;" @onclick="()=>ChangeTypeSpecified(aAfType)"></span>
+                                            <span class="oi oi-plus" aria-hidden="true" style="float:right;cursor:pointer;" @onclick="()=>ChangeTypeSpecified(aAfUiType)"></span>
                                         }
                                         else
                                         {
                                             <span class="oi oi-plus" aria-hidden="true" style="float:right;cursor:not-allowed;"
-                                                data-toggle="tooltip" data-placement="right" title="You must add the BaseType (@aAfType.BaseTemplateString) to the UA model first."></span>
+                                  data-toggle="tooltip" data-placement="right" title="@aAfUiType.canBeAddedErrorHint">
+                                            </span>
                                         }
                                     }
                                 }
@@ -107,38 +105,39 @@
                         </div>
                     }
                 </div>
+
             </div>
         </div>
     </div>
 
     <div class="col-8 pr-4">
-        @if (activeTemplate != null)
+        @if (activeAfUiType != null)
         {
             <div class="card mt-3" style="max-height: 60rem; width: 100%">
                 <div class="card-header">
                     <h4>
-                        Element Template Data
+                        SMIP Type Data
                     </h4>
                 </div>
                 <div class="card-body">
                     <div class="card-title">
-                        Name: @activeTemplate.Name<br />
-                        BaseType: @(activeTemplate.BaseTemplateString == null ? "n/a" : activeTemplate.BaseTemplateString)<br />
+                        Name: @activeAfUiType.Name<br />
+                        BaseType: @(activeAfUiType.BaseTypeString == null ? "n/a" : activeAfUiType.BaseTypeString)<br />
                     </div>
                     <div class="card-text">
-                        Description: @activeTemplate.Template.Description<br />
+                        Description: @activeAfUiType.AfType.Description<br />
                         <div class="row">
                             <div class="col-4">
                                 <br />
                                 Attributes:<br />
                                 <div class="list-group" style="max-height: 49rem; overflow-y:auto;">
-                                    @if (activeTemplate.Template.AFAttributeTemplate != null)
+                                    @if (activeAfUiType.AfType.AFAttributeTemplate != null)
                                     {
-                                        foreach (var aAfAttribute in activeTemplate.Template.AFAttributeTemplate)
+                                        foreach (var aAfTypeAttribute in activeAfUiType.AfType.AFAttributeTemplate)
                                         {
-                                            <button class="list-group-item list-group-item-action @(activeAttribute == null ? "" : (activeAttribute==aAfAttribute ? "active" : ""))"
-                                        @onclick="() => SetActiveAttribute(aAfAttribute)">
-                                                @aAfAttribute.Name
+                                            <button class="list-group-item list-group-item-action @(activeAttribute == null ? "" : (activeAttribute==aAfTypeAttribute ? "active" : ""))"
+                                        @onclick="() => SetActiveAttribute(aAfTypeAttribute)">
+                                                @aAfTypeAttribute.Name
                                             </button>
                                         }
                                     }
@@ -152,9 +151,9 @@
                                         Attribute Settings:<br /><br />
                                         Name: @activeAttribute.Name<br />
                                         Description: @activeAttribute.Description<br />
-                                        Data Type: @activeAttribute.Type<br />
-                                        UoM: @activeAttribute.DefaultUOM<br />
-                                        Ref:  @(activeAttribute.DataReference == null ? "n/a" : activeAttribute.DataReference.Value)<br />
+                                        DataType: @activeAttribute.Type<br />
+                                        UoM: @(activeAttribute.DefaultUOM == null ? "n/a" : activeAttribute.DefaultUOM)<br />
+                                        SourceCategory:  @(activeAttribute.DataReference == null ? "n/a" : activeAttribute.DataReference.Value)<br />
                                     </div>
                                 }
                             </div>
@@ -163,6 +162,7 @@
                 </div>
             </div>
         }
+
     </div>
 </div>
 
@@ -173,244 +173,224 @@
     [Parameter]
     public bool fullscreen { get; set; } = false;
 
-    string? uaNamespace {
-        get{
-            return md?.NamespacesDictionary["OpcUa"].Value;
-        }
-    }
-    string? newNamespace {
-        get{
-            return md?.NamespacesDictionary[newMd.mdName].Value;
-        }
-    }
+    NewModelDesign newNodeSetModel = new NewModelDesign();
 
-
-    void ChangeTypeSpecified(AfType aAfTemplate)
-    {
-        if (md == null) return;
-
-
-        aAfTemplate.isSelected = !aAfTemplate.isSelected;
-
-        if (aAfTemplate.isSelected)
-        {
-            // add object type design to model
-            var aType = md.ObjectTypeDesignsAdd(
-                new XmlQualifiedName(aAfTemplate.Name.Replace(" ", "_"), newNamespace),
-                new XmlQualifiedName("BaseObjectType", uaNamespace));
-
-            // set base template if applicable
-            if (aAfTemplate.BaseTemplate != null)
-            {
-                aType.BaseType = new XmlQualifiedName(aAfTemplate.BaseTemplate.Name, newNamespace);
-            }
-
-            // set description
-            aType.Description = new LocalizedTextModelDesign()
-                {
-                    Key = "en-US",
-                    Value = aAfTemplate.Template.Description
-                };
-
-            // iterate through attributes
-            foreach (var aAfAttribute in aAfTemplate.Template.AFAttributeTemplate)
-            {
-                // this is not correct - the "PI Point" is in data reference
-                if (aAfAttribute.DefaultUOM != null || aAfAttribute.Type == "PI Point")
-                {
-                    // create variable designs for timeseries data 
-                    // and attributes that have a unit of measure
-                    var aVariable = aType.VariableDesignsAdd(
-                        new XmlQualifiedName(aAfAttribute.Name, newNamespace),
-                        new XmlQualifiedName(aAfAttribute.Type, uaNamespace)
-                        );
-
-                    // add description
-                    aVariable.Description = new LocalizedTextModelDesign()
-                        {
-                            Key = "en-US",
-                            Value = aAfAttribute.Description
-                        };
-
-                    // add default value
-                    if (aAfAttribute.Value.Text != null)
-                    {
-                        aVariable.DefaultValue = aVariable.CreateDefaultValueXmlElement(aAfAttribute.Type, aAfAttribute.Value.Text[0]);
-                    }
-
-                    // create engeneerign unit
-                    if (aAfAttribute.DefaultUOM != null)
-                    {
-                        var propEU = aVariable.PropertyDesignsAdd(
-                            new XmlQualifiedName("EngineeringUnits", newNamespace),
-                            new XmlQualifiedName("EUInformation", uaNamespace)
-                        );
-                        EUInformation eui = EUInformation.EUInformationList.FirstOrDefault(x => x.DisplayName.Text == aAfAttribute.DefaultUOM);
-                        if (eui == null)
-                        {
-                            eui = new EUInformation
-                                {
-                                    DisplayName = new LocalizedTextOpcUa
-                                    {
-                                        Locale = "en-US",
-                                        Text = aAfAttribute.DefaultUOM
-                                    },
-                                    Description = new LocalizedTextOpcUa
-                                    {
-                                        Locale = "en-US",
-                                        Text = $"EU conversion error: {aAfAttribute.DefaultUOM} was not found in the UA unit catalog."
-                                    }
-                                };
-                        }
-                        propEU.DefaultValue = eui.CreateXmlElement();
-                    }
-
-                }
-                else
-                {
-                    // create simple property for static meta data 
-                    // and attributes that don't have a unit of measure
-                    var aProperty = aType.PropertyDesignsAdd(
-                        new XmlQualifiedName(aAfAttribute.Name, newNamespace),
-                        new XmlQualifiedName(aAfAttribute.Type, uaNamespace)
-                        );
-                    // set description
-                    aProperty.Description = new LocalizedTextModelDesign()
-                        {
-                            Key = "en-US",
-                            Value = aAfAttribute.Description
-                        };
-
-                    // add default value
-                    if (aAfAttribute.Value.Text != null)
-                    {
-                        aProperty.DefaultValue = aProperty.CreateDefaultValueXmlElement(aAfAttribute.Type, aAfAttribute.Value.Text[0]);
-                    } 
-
-                }
-            }
-
-            // after adding the type all types based on it can also be added
-            foreach (var aAfType in afTypes.Where(x => x.BaseTemplate != null).Where(x => x.BaseTemplate.Name == aAfTemplate.Name))
-            {
-                aAfType.canBeAdded = true;
-            }
-
-            // after adding the type this type can be removed
-            aAfTemplate.canBeRemoved = true;
-
-            // if this type is has a basetype that base type can't be removed
-            if (aAfTemplate.BaseTemplate != null)
-            {
-                afTypes.Find(x => x.Name == aAfTemplate.BaseTemplate.Name).canBeRemoved = false;
-            }
-        }
-        else
-        {
-            var aList = md.ObjectTypeDesigns;
-            var aKey = md.ObjectTypeDesigns.First(x => x.Value.SymbolicName.Name == aAfTemplate.Name.Replace(" ", "_")).Key;
-            aList.Remove(aKey);
-            NodeDesign[] array = aList.Select(x => x.Value).ToArray();
-            md.Items = array;
-
-            // now the basetype can be removed
-            if (aAfTemplate.BaseTemplate != null)
-            {
-                afTypes.Find(x => x.Name == aAfTemplate.BaseTemplate.Name).canBeRemoved = true;
-            }
-
-            // if other things are based on this they can't be added
-            foreach (var aAfType in afTypes.Where(x => x.BaseTemplate != null).Where(x => x.BaseTemplate.Name == aAfTemplate.Name))
-            {
-                aAfType.canBeAdded = false;
-            }
-        }
-
-    }
     [CascadingParameter] public IModalService Modal { get; set; }
-    void ShowModelDesignModal()
-    {
-        var parameters = new ModalParameters();
-        parameters.Add(nameof(ModelDesignPreview.md), md);
-
-        Modal.Show<ModelDesignPreview>("OPC UA Model", parameters);
-    }
     void ShowNodeSetModal()
     {
-        var parameters = new ModalParameters();
-        parameters.Add(nameof(ModelDesignPreview.md), md);
+        var parameters = new ModalParameters()
+            .Add(nameof(NodeSetPreview.nodeSetModel), nodeSetModel)
+            .Add(nameof(NodeSetPreview.baseNodeSets), baseNodeSets);
 
-        Modal.Show<NodeSetPreview>("OPC UA NodeSet2.xml", parameters);
-    }
-    public class NewMd
-    {
-        [Required(ErrorMessage = "Namespace Domain is required")]
-        public string? mdDomain { get; set; }
-
-        [Required(ErrorMessage = "Namespace Name is required")]
-        public string? mdName { get; set; }
-
-        public NewMd()
-        {
-
-        }
-    }
-    List<AfType> afTypes = new List<AfType>();
-    public class AfType
-    {
-        public string Name
-        {
-            get
+        var options = new ModalOptions()
             {
-                return Template.Name;
-            }
-        }
-        public AFElementTemplate Template { get; set; }
-        public AFElementTemplate BaseTemplate { get; set; }
-        public string? BaseTemplateString { get; set; }
-        public bool canBeAdded { get; set; }
-        public bool canBeRemoved { get; set; }
-        public bool isSelected { get; set; }
-        public AfType()
-        {
+                Size = ModalSize.ExtraLarge
+            };
 
-        }
+        Modal.Show<NodeSetPreview>("OPC UA NodeSet2.xml", parameters, options);
     }
 
     bool isLoading = false;
 
-    afEntry afEntry = new PIAF_Interop.afEntry();
+    DefaultOpcUaContext opcContext { get; set; }
+    UANodeSetModelImporter importer { get; set; }
+    public NodeSetModel nodeSetModel { get; set; }
+    public Dictionary<string, NodeSetModel> baseNodeSets { get; set; }
+    public NodeSetModel uaBaseModel { get; set; }
 
-    NewMd newMd = new NewMd();
+    uint nextNodeId = 1000;
 
-    void CreateNewMd()
+    async Task CreateNewMd()
     {
-        if (md == null)
+        if (nodeSetModel == null)
         {
-            md = new ModelDesign(newMd.mdDomain, newMd.mdName);
+
+            const string strNodeSetsDirectory = "NodeSets";
+            var file = Path.Combine(strNodeSetsDirectory, "opcfoundation.org.UA.NodeSet2.xml");
+            //Console.WriteLine($"Importing {file}");
+            var nodesetXml = File.ReadAllText(file);
+
+            opcContext = new DefaultOpcUaContext(NullLogger.Instance);
+            importer = new UANodeSetModelImporter(opcContext);
+
+            baseNodeSets = (await importer.ImportNodeSetModelAsync(nodesetXml)).ToDictionary(n => n.ModelUri);
+            uaBaseModel = baseNodeSets[Namespaces.OpcUa];
+
+            nodeSetModel = new NodeSetModel
+                {
+                    ModelUri = $"{newNodeSetModel.mdDomain}{(newNodeSetModel.mdDomain.EndsWith("/") ? "" : "/")}{newNodeSetModel.mdName}",
+                    RequiredModels = new List<RequiredModelInfo>
+                {
+                    new RequiredModelInfo { ModelUri= uaBaseModel.ModelUri, PublicationDate = uaBaseModel.PublicationDate, Version = uaBaseModel.Version}
+                },
+                };
+
         }
         else
         {
-            // keep items
-            var items = md.Items;
-            md = new ModelDesign(newMd.mdDomain, newMd.mdName);
-            md.Items = items;
-            // go through items and fix namespaces
-            if (md.Items != null)
-            {
-                foreach (var aObjectType in md.Items)
-                {
-                    aObjectType.SymbolicName = new XmlQualifiedName(aObjectType.SymbolicName.Name, newNamespace);
-                    foreach (var aAttribute in aObjectType.Children.Items)
-                    {
-                        aAttribute.SymbolicName = new XmlQualifiedName(aAttribute.SymbolicName.Name, newNamespace);
-                    }
-                }
-            }
+
         }
     }
 
-    ModelDesign md { get; set; }
+    AfUiType? activeAfUiType { get; set; }
+
+    void SetActiveAfUiType(AfUiType aAfUiType)
+    {
+        activeAttribute = null;
+        activeAfUiType = aAfUiType;
+    }
+
+    void ChangeTypeSpecified(AfUiType aAfUiType)
+    {
+        if (nodeSetModel == null) return;
+
+        aAfUiType.isSelected = !aAfUiType.isSelected;
+
+        if (aAfUiType.isSelected)
+        {
+
+            var newObjectTypeModel = new ObjectTypeModel
+                {
+                    DisplayName = new List<NodeModel.LocalizedText> { aAfUiType.AfType.Name },
+                    BrowseName = aAfUiType.AfType.Name,
+                    SymbolicName = aAfUiType.AfType.Name,
+                    SuperType = aAfUiType.AfBaseType == null ?
+                                    uaBaseModel.ObjectTypes.FirstOrDefault(ot => ot.BrowseName.EndsWith("BaseObjectType")) :
+                                    nodeSetModel.ObjectTypes.First(x => x.SymbolicName == aAfUiType.AfBaseType.Name),
+                    NodeSet = nodeSetModel,
+                    NodeId = new ExpandedNodeId(nextNodeId++, nodeSetModel.ModelUri).ToString(),
+                    Description = new List<NodeModel.LocalizedText> { aAfUiType.AfType.Description == null ? "" : aAfUiType.AfType.Description },
+                    Properties = new List<VariableModel>(),
+                    DataVariables = new List<DataVariableModel>(),
+                };
+
+            // iterate through children
+            // does not apply
+            //if (aAfUiType.AfType.ChildEquipment.Count > 0)
+            //{
+            //    newObjectTypeModel.SubTypes = new List<BaseTypeModel>();
+            //}
+
+            //foreach (var aAfTypeChild in aAfUiType.AfType.ChildEquipment)
+            //{
+            //    var aChildObjectType = nodeSetModel.ObjectTypes.First(x => x.SymbolicName == aAfTypeChild.ChildTypeFqn.Last());
+            //    newObjectTypeModel.Objects.Add(new ObjectModel()
+            //        {
+            //            TypeDefinition = aChildObjectType,
+            //            SymbolicName = aAfTypeChild.RelativeName,
+            //            BrowseName = aAfTypeChild.DisplayName,
+            //            DisplayName = new List<NodeModel.LocalizedText> { aAfTypeChild.DisplayName },
+            //            NodeSet = nodeSetModel,
+            //            NodeId = new ExpandedNodeId(nextNodeId++, nodeSetModel.ModelUri).ToString(),
+            //            Description = new List<NodeModel.LocalizedText> { aAfTypeChild.Description == null ? "" : aAfTypeChild.Description },
+            //            DataVariables = aChildObjectType.DataVariables,
+            //            Properties = aChildObjectType.Properties
+            //        });
+            //}
+
+
+
+
+            // iterate through attributes
+            foreach (var aAfTypeAttribute in aAfUiType.AfType.AFAttributeTemplate)
+            {
+                if (aAfTypeAttribute.DefaultUOM != "" || aAfTypeAttribute.DataReference?.Value == "PiPoint")
+                {
+                    // create variable designs for timeseries data
+                    // and attributes that have a unit of measure
+                    var aDataType = uaBaseModel.DataTypes.FirstOrDefault(ot => ot.BrowseName.EndsWith(aAfTypeAttribute.Type));
+                    var newDataVariableModel = new DataVariableModel()
+                        {
+                            NodeSet = nodeSetModel,
+                            NodeId = new ExpandedNodeId(nextNodeId++, nodeSetModel.ModelUri).ToString(),
+
+                            SymbolicName = aAfTypeAttribute.Name,
+                            BrowseName = aAfTypeAttribute.Name,
+                            DisplayName = new List<NodeModel.LocalizedText> { aAfTypeAttribute.Name },
+                            DataType = aDataType,
+                            Description = new List<NodeModel.LocalizedText> { aAfTypeAttribute.Description == null ? "" : aAfTypeAttribute.Description }
+                        };
+
+
+                    // add default value
+                    if (aAfTypeAttribute.Value.Text != null)
+                    {
+                        newDataVariableModel.Value = opcContext.JsonEncodeVariant(aAfTypeAttribute.Value.Text[0]);
+
+                    }
+
+                    // create engeneerign unit
+                    if (aAfTypeAttribute.DefaultUOM != "")
+                    {
+
+                        var aUom = NodeModelOpcExtensions.GetEUInformation(new VariableModel.EngineeringUnitInfo { DisplayName = aAfTypeAttribute.DefaultUOM });
+
+                        if (aUom.UnitId==0)
+                        {
+                            newDataVariableModel.EngineeringUnit = new VariableModel.EngineeringUnitInfo
+                                {
+                                    Description = $"Enegineering Unit error: Can't lookup {aAfTypeAttribute.DefaultUOM} in UNECE_to_OPCUA.csv table"
+                                };
+                        }
+                        else
+                        {
+                            newDataVariableModel.EngineeringUnit = new VariableModel.EngineeringUnitInfo
+                                {
+                                    DisplayName = aAfTypeAttribute.DefaultUOM
+                                };
+                        }
+                    }
+
+                    newObjectTypeModel.DataVariables.Add(newDataVariableModel);
+                }
+                else
+                {
+                    // create simple property for static meta data
+                    // and attributes that don't have a unit of measure
+                    var aDataType = uaBaseModel.DataTypes.FirstOrDefault(ot => ot.BrowseName.EndsWith(aAfTypeAttribute.Type));
+                    PropertyModel newPropertyModel = new PropertyModel()
+                        {
+                            NodeSet = nodeSetModel,
+                            NodeId = new ExpandedNodeId(nextNodeId++, nodeSetModel.ModelUri).ToString(),
+
+                            SymbolicName = aAfTypeAttribute.Name,
+                            BrowseName = aAfTypeAttribute.Name,
+                            DisplayName = new List<NodeModel.LocalizedText> { aAfTypeAttribute.Name },
+                            DataType = aDataType,
+                            Description = new List<NodeModel.LocalizedText> { aAfTypeAttribute.Description == null ? "" : aAfTypeAttribute.Description }
+                        };
+
+
+                    // add default value
+                    if (aAfTypeAttribute.Value.Text != null)
+                    {
+                        newPropertyModel.Value = opcContext.JsonEncodeVariant(aAfTypeAttribute.Value.Text[0]);
+                    }
+
+                    newObjectTypeModel.Properties.Add(newPropertyModel);
+                }
+            }
+
+
+            nodeSetModel.ObjectTypes.Add(newObjectTypeModel);
+
+
+
+        }
+        else
+        {
+            //var aList = md.ObjectTypeDesigns;
+            //var aKey = md.ObjectTypeDesigns.First(x => x.Value.SymbolicName.Name == aAfUiType.AfType.RelativeName.Replace("_", "")).Key;
+            //aList.Remove(aKey);
+            //NodeDesign[] array = aList.Select(x => x.Value).ToArray();
+            //md.Items = array;
+
+        }
+
+    }
+
+
+    public List<AfUiType> AfUiTypes = new List<AfUiType>();
 
     List<AFElementTemplate> afElementTemplates
     {
@@ -421,18 +401,15 @@
             return afEntry.afElementTemplates;
         }
     }
-    AfType? activeTemplate { get; set; }
+    AfUiType? activeTemplate { get; set; }
 
-    void SetActiveTemplate(AfType aAfElementTemplate)
-    {
-        activeAttribute = null;
-        activeTemplate = aAfElementTemplate;
-    }
     AFAttributeTemplate? activeAttribute { get; set; }
-    void SetActiveAttribute(AFAttributeTemplate aAfAttribute)
+    void SetActiveAttribute(AFAttributeTemplate aAfTypeAttribute)
     {
-        activeAttribute = aAfAttribute;
+        activeAttribute = aAfTypeAttribute;
     }
+
+    afEntry afEntry = new afEntry();
 
     async Task LoadFile(InputFileChangeEventArgs e)
     {
@@ -443,24 +420,22 @@
         var reader = await new StreamReader(e.File.OpenReadStream(10000000)).ReadToEndAsync();
         afEntry.ReadString(reader);
         isLoading = false;
-        afTypes = new List<AfType>();
-        if (md != null)
-        {
-            md.Items = new NodeDesign[] { };
-        }
+        AfUiTypes = new List<AfUiType>();
+
         foreach (var aAfTemplate in afEntry.afElementTemplates)
         {
-            AfType newType = new AfType
-                {
-                    Template = aAfTemplate,
-                    isSelected = false,
-                    BaseTemplateString=afEntry.GetAFElementTemplateBaseTypeString(aAfTemplate)
-                };
-
-            newType.BaseTemplate = afEntry.afElementTemplates.FirstOrDefault(x => x.Name == newType.BaseTemplateString);
-            newType.canBeAdded = newType.BaseTemplateString == null ? true : false;
-            afTypes.Add(newType);
+            AfUiType newType = new AfUiType(this);
+            newType.AfType = aAfTemplate;
+            newType.isSelected = false;
+            newType.BaseTypeString = afEntry.GetAFElementTemplateBaseTypeString(aAfTemplate);
+            newType.AfBaseType = afEntry.afElementTemplates.FirstOrDefault(x => x.Name == newType.BaseTypeString);
+            AfUiTypes.Add(newType);
         }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JS.InvokeVoidAsync("addTooltips");
     }
 
 }

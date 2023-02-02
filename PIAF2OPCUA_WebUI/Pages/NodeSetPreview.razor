@@ -1,9 +1,7 @@
-﻿@using System.Text
-@using Newtonsoft.Json.Linq
-@inject IJSRuntime JS
+﻿@inject IJSRuntime JS
 
 <div>
-    <textarea style="width:800px" rows="25" readonly>@xml</textarea>
+    <textarea style="width:100%" rows="25" readonly>@xml</textarea>
 </div>
 <div>
     <button style="float:right" class="btn btn-secondary" @onclick="SaveXML">Save .xml</button>
@@ -11,11 +9,14 @@
 @code {
     [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; }
 
-    [Parameter] public ModelDesign md { get; set; }
+    [Parameter] public NodeSetModel nodeSetModel { get; set; }
 
-    string? xml{ get; set; }
+    [Parameter] public Dictionary<string, NodeSetModel> baseNodeSets { get; set; }
 
-    async Task<string> GetNodeSetXml() {
+    string? xml { get; set; }
+
+    async Task<string> GetNodeSetXml()
+    {
         //var modelxml = md.GenerateModelXML();
         //var jobject = new JObject();
         //jobject["xml"] = modelxml;
@@ -28,9 +29,11 @@
         //var response = await aClient.PostAsync($"api/{FunctionName}?code={FunctionKey}", httpContent);
         //var result = await response.Content.ReadAsStringAsync();
 
-        var result = md.GenerateNodesetXML();
+        nodeSetModel.UpdateIndices();
 
-        return result;        
+        var exportedNodeSetXml = UANodeSetModelImporter.ExportNodeSetAsXml(nodeSetModel, baseNodeSets);
+
+        return exportedNodeSetXml;
     }
 
     async Task SaveXML()

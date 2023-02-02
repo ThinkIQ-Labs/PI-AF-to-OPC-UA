@@ -7,8 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazored.Modal" Version="6.0.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Blazored.Modal" Version="7.1.0" />
+    <PackageReference Include="CsvTextFieldParser" Version="1.2.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Core" Version="1.4.371.60" />
   </ItemGroup>
 
   <ItemGroup>
@@ -16,9 +18,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="ua.model.sdk">
-      <HintPath>..\..\UA-Model-SDK\ua.model.sdk\bin\Debug\net6.0\ua.model.sdk.dll</HintPath>
+    <Reference Include="CESMII.OpcUa.NodeSetImporter">
+      <HintPath>..\..\CESMII-NodeSet-Utilities\bin\Debug\CESMII.OpcUa.NodeSetImporter\netstandard2.1\CESMII.OpcUa.NodeSetImporter.dll</HintPath>
     </Reference>
+    <Reference Include="CESMII.OpcUa.NodeSetModel">
+      <HintPath>..\..\CESMII-NodeSet-Utilities\bin\Debug\CESMII.OpcUa.NodeSetModel\netstandard2.1\CESMII.OpcUa.NodeSetModel.dll</HintPath>
+    </Reference>
+    <Reference Include="CESMII.OpcUa.NodeSetModel.Factory.Opc">
+      <HintPath>..\..\CESMII-NodeSet-Utilities\bin\Debug\CESMII.OpcUa.NodeSetModel.Factory.Opc\netstandard2.0\CESMII.OpcUa.NodeSetModel.Factory.Opc.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="NodeSets\opcfoundation.org.UA.NodeSet2.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
