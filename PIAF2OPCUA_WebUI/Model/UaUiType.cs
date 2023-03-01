@@ -1,15 +1,15 @@
-﻿using PIAF_Interop;
+﻿using CESMII.OpcUa.NodeSetModel;
 using PIAF2OPCUA_WebUI.Pages;
 
 namespace PIAF2OPCUA_WebUI.Model
 {
-    public class AfUiType
+    public class UaUiType
     {
         public bool isSelected { get; set; }
 
-        public PIAF2OPCUA_Component ViewModel { get; set; }
+        public OPCUA2PIAF_Component ViewModel { get; set; }
 
-        public AfUiType(PIAF2OPCUA_Component comp)
+        public UaUiType(OPCUA2PIAF_Component comp)
         {
             ViewModel = comp;
         }
@@ -18,11 +18,11 @@ namespace PIAF2OPCUA_WebUI.Model
         {
             get
             {
-                return AfType.Name;
+                return UaType.DisplayName.FirstOrDefault().Text;
             }
         }
-        public AFElementTemplate AfType { get; set; }
-        public AFElementTemplate AfBaseType { get; set; }
+        public ObjectTypeModel UaType { get; set; }
+        public BaseTypeModel UaBaseType { get; set; }
         public string? BaseTypeString { get; set; }
         public string canBeAddedErrorHint { get; set; }
         public bool canBeAdded
@@ -30,7 +30,7 @@ namespace PIAF2OPCUA_WebUI.Model
             get
             {
                 // can't add because there is no model
-                if (ViewModel.nodeSetModel == null)
+                if (ViewModel.afModel == null)
                 {
                     return false;
                 }
@@ -42,11 +42,11 @@ namespace PIAF2OPCUA_WebUI.Model
                 }
 
                 // can't add because base type is not loaded
-                if (AfBaseType != null)
+                if (UaBaseType != null)
                 {
-                    if (ViewModel.AfUiTypes.First(x => x.AfType.Name == AfBaseType.Name).isSelected == false)
+                    if (ViewModel.UaUiTypes.First(x => x.UaType.DisplayName.FirstOrDefault().Text == UaBaseType.DisplayName.FirstOrDefault().Text).isSelected == false)
                     {
-                        canBeAddedErrorHint = $"BaseType ({AfBaseType.Name}) must be added first.";
+                        canBeAddedErrorHint = $"BaseType ({UaBaseType.DisplayName.FirstOrDefault().Text}) must be added first.";
                         return false;
                     }
                 }
@@ -65,14 +65,14 @@ namespace PIAF2OPCUA_WebUI.Model
                     return false;
                 }
 
-                foreach (var aType in ViewModel.AfUiTypes.Where(x => x.isSelected))
+                foreach (var aType in ViewModel.UaUiTypes.Where(x => x.isSelected))
                 {
                     // can't remove because it's a basetype for something
-                    if (aType.AfBaseType != null)
+                    if (aType.UaBaseType != null)
                     {
-                        if (aType.AfBaseType.Name == AfType.Name)
+                        if (aType.UaBaseType.DisplayName.FirstOrDefault().Text == UaType.DisplayName.FirstOrDefault().Text)
                         {
-                            canBeRemovedErrorHint = $"This is a BaseType for {aType.AfType.Name}. It must be removed first.";
+                            canBeRemovedErrorHint = $"This is a BaseType for {aType.UaType.DisplayName.FirstOrDefault().Text}. It must be removed first.";
                             return false;
                         }
                     }

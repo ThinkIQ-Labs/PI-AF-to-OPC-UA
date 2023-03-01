@@ -1,0 +1,530 @@
+﻿@using System.Xml;
+@using System.Xml.Serialization;
+@inject IJSRuntime JS
+
+<div class="row">
+
+    <div class="col-4 pl-4">
+        <div class="card mt-3" style="max-height: 60rem;">
+            <div class="card-header">
+                <h4>
+                    PI AF Model
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="card-title">
+                    <button @onclick="ResetAfModel" class="btn mt-3 mr-4" style="padding: 0.2em; border: thin solid grey; border-radius: 3px;background-color: #efefef;">
+                        <span>Clear AF Model</span>
+                    </button>
+                    @if (afModel != null)
+                    {
+                        <button disabled="@(afModel.Items==null ? true : (afModel.Items.Count()==0 ? true : false))" type="button" class="btn btn-link ml-4 mt-3" @onclick="ShowAfModelModal">View AF Model XML</button>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-3" style="max-height: 46rem;">
+            <div class="card-header">
+                <h4>
+                    Import UA NodeSet from XML
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="card-title">
+                    <label class="text-reader">
+                        <InputFile OnChange="@LoadFile" />
+                    </label>
+                    @if (isLoading)
+                    {
+                        <p>loading...</p>
+                    }
+                </div>
+                @if (UaUiTypes.Count > 0)
+                {
+                    <hr />
+                }
+                <div class="list-group" style="max-height: 36rem; overflow-y:auto;">
+                    @foreach (var aUaUiType in UaUiTypes)
+                    {
+                        <div class="list-group">
+                            <button class="list-group-item list-group-item-action @(activeUaUiType == null ? "" : (activeUaUiType==aUaUiType ? "active" : ""))"
+                                @onclick="() => SetActiveAfUiType(aUaUiType)">
+                                @aUaUiType.Name
+                                @if (aUaUiType.isSelected)
+                                {
+                                    if (aUaUiType.canBeRemoved)
+                                    {
+                                        <span class="oi oi-trash" aria-hidden="true" style="float:right;cursor:pointer;" @onclick="()=>ChangeTypeSpecified(aUaUiType)"></span>
+                                    }
+                                    else
+                                    {
+                                        <span class="oi oi-trash" aria-hidden="true" style="float:right;cursor:not-allowed;"
+                                  data-toggle="tooltip" data-placement="right" title="@aUaUiType.canBeRemovedErrorHint"></span>
+                                    }
+
+                                    @if (aUaUiType.isSelected)
+                                    {
+                                        <span class="oi oi-circle-check" aria-hidden="true" style="float:right;width:20px;"></span>
+                                    }
+                                }
+                                else
+                                {
+                                    if (afModel == null)
+                                    {
+                                        <span class="oi oi-plus" aria-hidden="true" style="float:right;cursor:not-allowed;"
+                                  data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="You must create a PI AF model first."></span>
+
+                                    }
+                                    else
+                                    {
+                                        if (aUaUiType.canBeAdded)
+                                        {
+                                            <span class="oi oi-plus" aria-hidden="true" style="float:right;cursor:pointer;" @onclick="()=>ChangeTypeSpecified(aUaUiType)"></span>
+                                        }
+                                        else
+                                        {
+                                            <span class="oi oi-plus" aria-hidden="true" style="float:right;cursor:not-allowed;"
+                                  data-toggle="tooltip" data-placement="right" title="@aUaUiType.canBeAddedErrorHint">
+                                            </span>
+                                        }
+                                    }
+                                }
+                            </button>
+                        </div>
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-8 pr-4">
+        @if (activeUaUiType != null)
+        {
+            <div class="card mt-3" style="max-height: 60rem; width: 100%">
+                <div class="card-header">
+                    <h4>
+                        OPC UA Type Data
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">
+                        Name: @activeUaUiType.Name <i>(Namespace: @activeUaUiType.UaType.Namespace)</i>
+                        <br />
+                        BaseType: @(activeUaUiType.BaseTypeString == null ? "n/a" : activeUaUiType.BaseTypeString)
+                        <i>@(activeUaUiType.BaseTypeString == null ? "" : $"(Namespace: {activeUaUiType.UaBaseType.Namespace})")</i>
+                        <br />
+                    </div>
+                    <div class="card-text">
+                        Description: @(activeUaUiType.UaType.Description.Count==0 ? "" : activeUaUiType.UaType.Description.First())<br />
+                        <div class="row">
+                            <div class="col-4">
+                                <br />
+                                Properties:<br />
+                                <div class="list-group" style="max-height: 49rem; overflow-y:auto;">
+                                    @if (activeUaUiType.UaType.Properties != null)
+                                    {
+                                        foreach (VariableModel aUaVariable in activeUaUiType.UaType.Properties)
+                                        {
+                                            <button class="list-group-item list-group-item-action @(activeVariableModel == null ? "" : (activeVariableModel==aUaVariable ? "active" : ""))"
+                                        @onclick="() => SetActiveVariableModel(aUaVariable)">
+                                                @aUaVariable.DisplayName.First()
+                                            </button>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-8">
+                                @if (activeVariableModel != null)
+                                {
+                                    <div>
+                                        <br />
+                                        Attribute Settings:<br /><br />
+                                        Name: @activeVariableModel.DisplayName.First()<br />
+                                        Description: @(activeVariableModel.Description.Count == 0 ? "" : activeVariableModel.Description.First())<br />
+                                        DataType: @activeVariableModel.DataType.DisplayName.First()<br />
+                                        UoM: @(activeVariableModel.EngineeringUnit == null ? "n/a" : activeVariableModel.EngineeringUnit.DisplayName)<br />
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <br />
+                                Variables:<br />
+                                <div class="list-group" style="max-height: 49rem; overflow-y:auto;">
+                                    @if (activeUaUiType.UaType.DataVariables != null)
+                                    {
+                                        foreach (DataVariableModel aUaDataVariable in activeUaUiType.UaType.DataVariables)
+                                        {
+                                            <button class="list-group-item list-group-item-action @(activeDataVariableModel == null ? "" : (activeDataVariableModel==aUaDataVariable ? "active" : ""))"
+                                        @onclick="() => SetActiveDataVariableModel(aUaDataVariable)">
+                                                @aUaDataVariable.DisplayName.First()
+                                            </button>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-8">
+                                @if (activeDataVariableModel != null)
+                                {
+                                    <div>
+                                        <br />
+                                        Attribute Settings:<br /><br />
+                                        Name: @activeDataVariableModel.DisplayName.First()<br />
+                                        Description: @(activeDataVariableModel.Description.Count == 0 ? "" : activeDataVariableModel.Description.First())<br />
+                                        DataType: @activeDataVariableModel.DataType.DisplayName.First()<br />
+                                        UoM: @(activeDataVariableModel.EngineeringUnit == null ? "n/a" : activeDataVariableModel.EngineeringUnit.DisplayName)<br />
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+
+
+@code {
+
+        [Parameter]
+        public bool fullscreen { get; set; } = false;
+
+        [CascadingParameter] public IModalService Modal { get; set; }
+        void ShowAfModelModal()
+        {
+            var parameters = new ModalParameters()
+                .Add(nameof(PiAfPreview.afModel), afModel);
+
+            var options = new ModalOptions()
+            {
+                Size = ModalSize.ExtraLarge
+            };
+
+            Modal.Show<PiAfPreview>("PI AF Element Templates.xml", parameters, options);
+        }
+
+        bool isLoading = false;
+
+        DefaultOpcUaContext opcContext { get; set; }
+        UANodeSetModelImporter importer { get; set; }
+        Dictionary<string, NodeSetModel> nodeSetModels { get; set; }
+    public AF afModel = new AF();
+    
+
+    uint nextNodeId = 1000;
+
+    async Task ResetAfModel()
+    {
+        afModel = new AF();
+    }
+
+    UaUiType? activeUaUiType { get; set; }
+
+    void SetActiveAfUiType(UaUiType aUaUiType)
+    {
+        activeVariableModel = null;
+        activeUaUiType = aUaUiType;
+    }
+
+    void ChangeTypeSpecified(UaUiType aUaUiType)
+    {
+        if (afModel == null) return;
+
+        aUaUiType.isSelected = !aUaUiType.isSelected;
+
+        if (aUaUiType.isSelected)
+        {
+
+            AFElementTemplate newTemplate = new AFElementTemplate();
+            newTemplate.Name = aUaUiType.Name;
+            var items = afModel.Items == null ? new List<object>() : afModel.Items.ToList();
+            items.Add(newTemplate);
+            afModel.Items = items.ToArray();
+
+            //var newObjectTypeModel = new ObjectTypeModel
+            //    {
+            //        DisplayName = new List<NodeModel.LocalizedText> { aAfUiType.AfType.Name },
+            //        BrowseName = aAfUiType.AfType.Name,
+            //        SymbolicName = aAfUiType.AfType.Name,
+            //        SuperType = aAfUiType.AfBaseType == null ?
+            //                        uaBaseModel.ObjectTypes.FirstOrDefault(ot => ot.BrowseName.EndsWith("BaseObjectType")) :
+            //                        nodeSetModel.ObjectTypes.First(x => x.SymbolicName == aAfUiType.AfBaseType.Name),
+            //        NodeSet = nodeSetModel,
+            //        NodeId = new ExpandedNodeId(nextNodeId++, nodeSetModel.ModelUri).ToString(),
+            //        Description = new List<NodeModel.LocalizedText> { aAfUiType.AfType.Description == null ? "" : aAfUiType.AfType.Description },
+            //        Properties = new List<VariableModel>(),
+            //        DataVariables = new List<DataVariableModel>(),
+            //    };
+
+            // iterate through children
+            // does not apply
+            //if (aAfUiType.AfType.ChildEquipment.Count > 0)
+            //{
+            //    newObjectTypeModel.SubTypes = new List<BaseTypeModel>();
+            //}
+
+            //foreach (var aAfTypeChild in aAfUiType.AfType.ChildEquipment)
+            //{
+            //    var aChildObjectType = nodeSetModel.ObjectTypes.First(x => x.SymbolicName == aAfTypeChild.ChildTypeFqn.Last());
+            //    newObjectTypeModel.Objects.Add(new ObjectModel()
+            //        {
+            //            TypeDefinition = aChildObjectType,
+            //            SymbolicName = aAfTypeChild.RelativeName,
+            //            BrowseName = aAfTypeChild.DisplayName,
+            //            DisplayName = new List<NodeModel.LocalizedText> { aAfTypeChild.DisplayName },
+            //            NodeSet = nodeSetModel,
+            //            NodeId = new ExpandedNodeId(nextNodeId++, nodeSetModel.ModelUri).ToString(),
+            //            Description = new List<NodeModel.LocalizedText> { aAfTypeChild.Description == null ? "" : aAfTypeChild.Description },
+            //            DataVariables = aChildObjectType.DataVariables,
+            //            Properties = aChildObjectType.Properties
+            //        });
+            //}
+
+
+
+
+            // iterate through attributes
+            foreach (var aAfTypeAttribute in aUaUiType.UaType.Properties)
+            {
+                //if (aAfTypeAttribute.DefaultUOM != "" || aAfTypeAttribute.DataReference?.Value == "PiPoint")
+                //{
+                //    // create variable designs for timeseries data
+                //    // and attributes that have a unit of measure
+                //    var aDataType = uaBaseModel.DataTypes.FirstOrDefault(ot => ot.BrowseName.EndsWith(aAfTypeAttribute.Type));
+                //    var newDataVariableModel = new DataVariableModel()
+                //        {
+                //            NodeSet = nodeSetModel,
+                //            NodeId = new ExpandedNodeId(nextNodeId++, nodeSetModel.ModelUri).ToString(),
+
+                //            SymbolicName = aAfTypeAttribute.Name,
+                //            BrowseName = aAfTypeAttribute.Name,
+                //            DisplayName = new List<NodeModel.LocalizedText> { aAfTypeAttribute.Name },
+                //            DataType = aDataType,
+                //            Description = new List<NodeModel.LocalizedText> { aAfTypeAttribute.Description == null ? "" : aAfTypeAttribute.Description }
+                //        };
+
+
+                //    // add default value
+                //    if (aAfTypeAttribute.Value.Text != null)
+                //    {
+                //        newDataVariableModel.Value = opcContext.JsonEncodeVariant(aAfTypeAttribute.Value.Text[0]);
+
+                //    }
+
+                //    // create engeneerign unit
+                //    if (aAfTypeAttribute.DefaultUOM != "")
+                //    {
+
+                //        var aUom = NodeModelOpcExtensions.GetEUInformation(new VariableModel.EngineeringUnitInfo { DisplayName = aAfTypeAttribute.DefaultUOM });
+
+                //        if (aUom.UnitId==0)
+                //        {
+                //            newDataVariableModel.EngineeringUnit = new VariableModel.EngineeringUnitInfo
+                //                {
+                //                    Description = $"Enegineering Unit error: Can't lookup {aAfTypeAttribute.DefaultUOM} in UNECE_to_OPCUA.csv table"
+                //                };
+                //        }
+                //        else
+                //        {
+                //            newDataVariableModel.EngineeringUnit = new VariableModel.EngineeringUnitInfo
+                //                {
+                //                    DisplayName = aAfTypeAttribute.DefaultUOM
+                //                };
+                //        }
+                //    }
+
+                //    newObjectTypeModel.DataVariables.Add(newDataVariableModel);
+                //}
+                //else
+                //{
+                //    // create simple property for static meta data
+                //    // and attributes that don't have a unit of measure
+                //    var aDataType = uaBaseModel.DataTypes.FirstOrDefault(ot => ot.BrowseName.EndsWith(aAfTypeAttribute.Type));
+                //    PropertyModel newPropertyModel = new PropertyModel()
+                //        {
+                //            NodeSet = nodeSetModel,
+                //            NodeId = new ExpandedNodeId(nextNodeId++, nodeSetModel.ModelUri).ToString(),
+
+                //            SymbolicName = aAfTypeAttribute.Name,
+                //            BrowseName = aAfTypeAttribute.Name,
+                //            DisplayName = new List<NodeModel.LocalizedText> { aAfTypeAttribute.Name },
+                //            DataType = aDataType,
+                //            Description = new List<NodeModel.LocalizedText> { aAfTypeAttribute.Description == null ? "" : aAfTypeAttribute.Description }
+                //        };
+
+
+                //    // add default value
+                //    if (aAfTypeAttribute.Value.Text != null)
+                //    {
+                //        newPropertyModel.Value = opcContext.JsonEncodeVariant(aAfTypeAttribute.Value.Text[0]);
+                //    }
+
+                //    newObjectTypeModel.Properties.Add(newPropertyModel);
+                //}
+            }
+
+
+            //afModel.Template.Add(newObjectTypeModel);
+
+
+
+        }
+        else
+        {
+            //var aList = md.ObjectTypeDesigns;
+            //var aKey = md.ObjectTypeDesigns.First(x => x.Value.SymbolicName.Name == aAfUiType.AfType.RelativeName.Replace("_", "")).Key;
+            //aList.Remove(aKey);
+            //NodeDesign[] array = aList.Select(x => x.Value).ToArray();
+            //md.Items = array;
+
+        }
+
+    }
+
+
+    public List<UaUiType> UaUiTypes = new List<UaUiType>();
+
+    List<ObjectTypeModel> uaObjectTypeModels
+    {
+        get
+        {
+            //if (afEntry == null) return new List<ObjectTypeModel>();
+            //if (afEntry.afModel == null) return new List<ObjectTypeModel>();
+            return new List<ObjectTypeModel>(); ;
+        }
+    }
+
+    VariableModel? activeVariableModel { get; set; }
+    void SetActiveVariableModel(VariableModel aVariableModel)
+    {
+        activeVariableModel = aVariableModel;
+    }
+
+    DataVariableModel? activeDataVariableModel { get; set; }
+    void SetActiveDataVariableModel(DataVariableModel aDataVariableModel)
+    {
+        activeDataVariableModel = aDataVariableModel;
+    }
+
+    async Task LoadFile(InputFileChangeEventArgs e)
+    {
+        isLoading = true;
+        activeVariableModel = null;
+        activeDataVariableModel = null;
+        activeUaUiType = null;
+
+        UaUiTypes = new List<UaUiType>();
+
+        const string strNodeSetDirectory = "NodeSets";
+
+        // Set up the importer
+        importer = new UANodeSetModelImporter(NullLogger.Instance);
+        nodeSetModels = new();
+        opcContext = new DefaultOpcUaContext(nodeSetModels, NullLogger.Instance);
+
+        // Read and import the base nodeset
+        var file = Path.Combine(strNodeSetDirectory, "opcfoundation.org.UA.NodeSet2.xml");
+        var nodeSet = UANodeSet.Read(new FileStream(file, FileMode.Open));
+        await importer.LoadNodeSetModelAsync(opcContext, nodeSet);
+
+        // Read and import DI nodeset
+        file = Path.Combine(strNodeSetDirectory, "opcfoundation.org.UA.DI.NodeSet2.xml");
+        nodeSet = UANodeSet.Read(new FileStream(file, FileMode.Open));
+        await importer.LoadNodeSetModelAsync(opcContext, nodeSet);
+
+        // Read and import Robotics nodeset
+        file = Path.Combine(strNodeSetDirectory, "opcfoundation.org.UA.Robotics.NodeSet2.xml");
+        nodeSet = UANodeSet.Read(new FileStream(file, FileMode.Open));
+        await importer.LoadNodeSetModelAsync(opcContext, nodeSet);
+
+
+        var reader = await new StreamReader(e.File.OpenReadStream(10000000)).ReadToEndAsync();
+        try
+        {
+
+            nodeSet = UANodeSetFromString.Read(reader);
+            await importer.LoadNodeSetModelAsync(opcContext, nodeSet);
+            var uaModel = nodeSetModels.Last().Value;
+
+
+            foreach (ObjectTypeModel aObjectTypeModel in uaModel.ObjectTypes)
+            {
+                //ObjectTypeModel aBaseUaType = aObjectTypeModel.SuperType as ObjectTypeModel;
+                //var aBaseUaUiType = UaUiTypes.FirstOrDefault(x => x.UaType.DisplayName.FirstOrDefault().Text == aBaseUaType?.DisplayName.FirstOrDefault().Text);
+
+                //UaUiType newType = new UaUiType(this);
+                //newType.UaType = aObjectTypeModel;
+                //newType.isSelected = false;
+                //newType.BaseTypeString = aBaseUaType.SuperType?.DisplayName.FirstOrDefault().Text;
+                //newType.UaBaseType = aBaseUaType.SuperType;
+                //UaUiTypes.Add(newType);
+                //if (newType.UaBaseType != null)
+                //{
+                //    ResolveBaseType(aBaseUaType);
+                //}
+                AddUaUiType(aObjectTypeModel);
+            }
+
+
+        } 
+        catch(Exception ex)
+        {
+            var m = ex.Message;    
+        }
+        isLoading = false;
+    }
+
+    void AddUaUiType(ObjectTypeModel aObjectTypeModel)
+    {
+        ObjectTypeModel aBaseUaType = aObjectTypeModel.SuperType as ObjectTypeModel;
+        var aBaseUaUiType = UaUiTypes.FirstOrDefault(x => x.UaType.DisplayName.FirstOrDefault().Text == aBaseUaType?.DisplayName.FirstOrDefault().Text);
+
+        UaUiType newType = new UaUiType(this);
+        newType.UaType = aObjectTypeModel;
+        newType.isSelected = false;
+        newType.BaseTypeString = aBaseUaType?.DisplayName.FirstOrDefault().Text;
+        newType.UaBaseType = aBaseUaType;
+        UaUiTypes.Add(newType);
+        if (aBaseUaType!=null && aBaseUaUiType == null)
+        {
+            AddUaUiType(aBaseUaType);
+        }
+
+    }
+
+    //void ResolveBaseType(ObjectTypeModel aObjectTypeModel)
+    //{
+    //    ObjectTypeModel aBaseUaType = aObjectTypeModel.SuperType as ObjectTypeModel;
+    //    var aBaseUaUiType = UaUiTypes.FirstOrDefault(x => x.UaType.DisplayName.FirstOrDefault().Text == aBaseUaType?.DisplayName.FirstOrDefault().Text);
+
+    //    if (aBaseUaUiType == null)
+    //    {
+    //        UaUiType newType = new UaUiType(this);
+    //        newType.UaType = aBaseUaType;
+    //        newType.isSelected = false;
+    //        newType.BaseTypeString = aBaseUaType.SuperType?.DisplayName.FirstOrDefault().Text;
+    //        newType.UaBaseType = aBaseUaType.SuperType;
+    //        UaUiTypes.Add(newType);
+    //        if (newType.UaBaseType != null)
+    //        {
+    //            ResolveBaseType(aBaseUaType);
+    //        }
+    //    }
+    //    else
+    //    {
+    //        // all is good
+    //    }
+    //}
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JS.InvokeVoidAsync("addTooltips");
+    }
+
+}

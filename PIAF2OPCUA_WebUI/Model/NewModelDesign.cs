@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace PIAF2OPCUA_WebUI.Pages.Model
+namespace PIAF2OPCUA_WebUI.Model
 {
     public class NewModelDesign
     {

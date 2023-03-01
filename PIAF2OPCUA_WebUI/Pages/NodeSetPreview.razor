@@ -31,7 +31,7 @@
 
         nodeSetModel.UpdateIndices();
 
-        var exportedNodeSetXml = UANodeSetModelImporter.ExportNodeSetAsXml(nodeSetModel, baseNodeSets);
+        var exportedNodeSetXml = UANodeSetModelExporter.ExportNodeSetAsXml(nodeSetModel, baseNodeSets);
 
         return exportedNodeSetXml;
     }
