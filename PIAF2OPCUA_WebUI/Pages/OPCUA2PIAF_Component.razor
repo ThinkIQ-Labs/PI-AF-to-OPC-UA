@@ -192,30 +192,30 @@
 
 @code {
 
-        [Parameter]
-        public bool fullscreen { get; set; } = false;
+    [Parameter]
+    public bool fullscreen { get; set; } = false;
 
-        [CascadingParameter] public IModalService Modal { get; set; }
-        void ShowAfModelModal()
-        {
-            var parameters = new ModalParameters()
-                .Add(nameof(PiAfPreview.afModel), afModel);
+    [CascadingParameter] public IModalService Modal { get; set; }
+    void ShowAfModelModal()
+    {
+        var parameters = new ModalParameters()
+            .Add(nameof(PiAfPreview.afModel), afModel);
 
-            var options = new ModalOptions()
+        var options = new ModalOptions()
             {
                 Size = ModalSize.ExtraLarge
             };
 
-            Modal.Show<PiAfPreview>("PI AF Element Templates.xml", parameters, options);
-        }
+        Modal.Show<PiAfPreview>("PI AF Element Templates.xml", parameters, options);
+    }
 
-        bool isLoading = false;
+    bool isLoading = false;
 
-        DefaultOpcUaContext opcContext { get; set; }
-        UANodeSetModelImporter importer { get; set; }
-        Dictionary<string, NodeSetModel> nodeSetModels { get; set; }
+    DefaultOpcUaContext opcContext { get; set; }
+    UANodeSetModelImporter importer { get; set; }
+    Dictionary<string, NodeSetModel> nodeSetModels { get; set; }
     public AF afModel = new AF();
-    
+
 
     uint nextNodeId = 1000;
 
@@ -243,31 +243,64 @@
 
             AFElementTemplate newTemplate = new AFElementTemplate();
             newTemplate.Name = aUaUiType.Name;
+            newTemplate.Description = aUaUiType.UaType.Description.Count == 0 ? "" : aUaUiType.UaType.Description.First().Text;
+            if (aUaUiType.UaBaseType != null)
+            {
+                newTemplate.BaseTemplate = aUaUiType.BaseTypeString;
+            }
+
+            List<AFAttributeTemplate> newAttributes = new List<AFAttributeTemplate>();
+            foreach(VariableModel aProp in aUaUiType.UaType.Properties)
+            {
+                AFAttributeTemplate newAttributeTemplate = new AFAttributeTemplate();
+                newAttributeTemplate.Name = aProp.DisplayName.FirstOrDefault().Text;
+                newAttributeTemplate.Description = aProp.Description.Count == 0 ? "" : aProp.Description.First().Text;
+                newAttributeTemplate.Type = DataTypeConverter.OPCUA2PIAF(aProp.DataType.DisplayName.First().Text);
+
+                if (aProp.Value!=null){
+                    var defaultValue = JsonConvert.DeserializeObject<JObject>(aProp.Value);
+                    var valueTypeId = defaultValue["Value"]["Type"].Value<int>();
+                    var opcType = nodeSetModels.First().Value.DataTypes.First(x => x.NodeId.Split("=").Last() == valueTypeId.ToString());
+                    var valueBody = defaultValue["Value"]["Body"].Value<string>();
+                    newAttributeTemplate.Value = new Value()
+                        {
+                            type = newAttributeTemplate.Type,
+                            Text = new string[] { valueBody }
+                        };
+                }
+
+                newAttributes.Add(newAttributeTemplate);
+            }
+            foreach(DataVariableModel aProp in aUaUiType.UaType.DataVariables)
+            {
+                AFAttributeTemplate newAttributeTemplate = new AFAttributeTemplate();
+                newAttributeTemplate.Name = aProp.DisplayName.FirstOrDefault().Text;
+                newAttributeTemplate.Description = aProp.Description.Count == 0 ? "" : aProp.Description.First().Text;
+                newAttributeTemplate.Type = DataTypeConverter.OPCUA2PIAF(aProp.DataType.DisplayName.First().Text);
+                
+                if (aProp.Value != null)
+                {
+                    var defaultValue = JsonConvert.DeserializeObject<JObject>(aProp.Value);
+                    var valueTypeId = defaultValue["Value"]["Type"].Value<int>();
+                    var opcType = nodeSetModels.First().Value.DataTypes.First(x => x.NodeId.Split("=").Last() == valueTypeId.ToString());
+                    var valueBody = defaultValue["Value"]["Body"].Value<string>();
+                    newAttributeTemplate.Value = new Value()
+                        {
+                            type = newAttributeTemplate.Type,
+                            Text = new string[] { valueBody }
+                        };
+                }
+
+                newAttributes.Add(newAttributeTemplate);
+            }
+
+            newTemplate.AFAttributeTemplate = newAttributes.ToArray();
+
+            
             var items = afModel.Items == null ? new List<object>() : afModel.Items.ToList();
             items.Add(newTemplate);
             afModel.Items = items.ToArray();
 
-            //var newObjectTypeModel = new ObjectTypeModel
-            //    {
-            //        DisplayName = new List<NodeModel.LocalizedText> { aAfUiType.AfType.Name },
-            //        BrowseName = aAfUiType.AfType.Name,
-            //        SymbolicName = aAfUiType.AfType.Name,
-            //        SuperType = aAfUiType.AfBaseType == null ?
-            //                        uaBaseModel.ObjectTypes.FirstOrDefault(ot => ot.BrowseName.EndsWith("BaseObjectType")) :
-            //                        nodeSetModel.ObjectTypes.First(x => x.SymbolicName == aAfUiType.AfBaseType.Name),
-            //        NodeSet = nodeSetModel,
-            //        NodeId = new ExpandedNodeId(nextNodeId++, nodeSetModel.ModelUri).ToString(),
-            //        Description = new List<NodeModel.LocalizedText> { aAfUiType.AfType.Description == null ? "" : aAfUiType.AfType.Description },
-            //        Properties = new List<VariableModel>(),
-            //        DataVariables = new List<DataVariableModel>(),
-            //    };
-
-            // iterate through children
-            // does not apply
-            //if (aAfUiType.AfType.ChildEquipment.Count > 0)
-            //{
-            //    newObjectTypeModel.SubTypes = new List<BaseTypeModel>();
-            //}
 
             //foreach (var aAfTypeChild in aAfUiType.AfType.ChildEquipment)
             //{
