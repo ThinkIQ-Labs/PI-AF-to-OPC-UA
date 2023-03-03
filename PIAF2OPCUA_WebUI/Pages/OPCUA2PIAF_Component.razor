@@ -1,5 +1,7 @@
 ﻿@using System.Xml;
 @using System.Xml.Serialization;
+@using CESMII.OpcUa.NodeSetModel.Export.Opc;
+
 @inject IJSRuntime JS
 
 <div class="row">
@@ -232,6 +234,41 @@
         activeUaUiType = aUaUiType;
     }
 
+    AFAttributeTemplate getAfAttributeTemplate(VariableModel aProp)
+    {
+        AFAttributeTemplate newAttributeTemplate = new AFAttributeTemplate();
+        newAttributeTemplate.Name = aProp.DisplayName.FirstOrDefault().Text;
+        newAttributeTemplate.Description = aProp.Description.Count == 0 ? "" : aProp.Description.First().Text;
+        newAttributeTemplate.Type = DataTypeConverter.OPCUA2PIAF(aProp.DataType.DisplayName.First().Text);
+
+        if (aProp.Value != null)
+        {
+            var defaultValue = JsonConvert.DeserializeObject<JObject>(aProp.Value);
+            var valueTypeId = defaultValue["Value"]["Type"].Value<int>();
+            var opcType = nodeSetModels.First().Value.DataTypes.First(x => x.NodeId.Split("=").Last() == valueTypeId.ToString());
+            var valueBody = defaultValue["Value"]["Body"].Value<string>();
+            newAttributeTemplate.Value = new Value()
+                {
+                    type = newAttributeTemplate.Type,
+                    Text = new string[] { valueBody }
+                };
+
+            //using (var decoder = new JsonDecoder(aProp.Value, ServiceMessageContext.GlobalContext))
+            //{
+            //    var value = decoder.ReadVariant("Value");
+            //    var xml = VariableModelExportOpc<VariableModel>.    .GetVariantAsXML(value);
+            //};
+
+        }
+
+        if (aProp.EngineeringUnit != null)
+        {
+            var stfu = 23;
+        }
+
+        return newAttributeTemplate;
+    }
+
     void ChangeTypeSpecified(UaUiType aUaUiType)
     {
         if (afModel == null) return;
@@ -252,46 +289,11 @@
             List<AFAttributeTemplate> newAttributes = new List<AFAttributeTemplate>();
             foreach(VariableModel aProp in aUaUiType.UaType.Properties)
             {
-                AFAttributeTemplate newAttributeTemplate = new AFAttributeTemplate();
-                newAttributeTemplate.Name = aProp.DisplayName.FirstOrDefault().Text;
-                newAttributeTemplate.Description = aProp.Description.Count == 0 ? "" : aProp.Description.First().Text;
-                newAttributeTemplate.Type = DataTypeConverter.OPCUA2PIAF(aProp.DataType.DisplayName.First().Text);
-
-                if (aProp.Value!=null){
-                    var defaultValue = JsonConvert.DeserializeObject<JObject>(aProp.Value);
-                    var valueTypeId = defaultValue["Value"]["Type"].Value<int>();
-                    var opcType = nodeSetModels.First().Value.DataTypes.First(x => x.NodeId.Split("=").Last() == valueTypeId.ToString());
-                    var valueBody = defaultValue["Value"]["Body"].Value<string>();
-                    newAttributeTemplate.Value = new Value()
-                        {
-                            type = newAttributeTemplate.Type,
-                            Text = new string[] { valueBody }
-                        };
-                }
-
-                newAttributes.Add(newAttributeTemplate);
+                newAttributes.Add(getAfAttributeTemplate(aProp));
             }
             foreach(DataVariableModel aProp in aUaUiType.UaType.DataVariables)
             {
-                AFAttributeTemplate newAttributeTemplate = new AFAttributeTemplate();
-                newAttributeTemplate.Name = aProp.DisplayName.FirstOrDefault().Text;
-                newAttributeTemplate.Description = aProp.Description.Count == 0 ? "" : aProp.Description.First().Text;
-                newAttributeTemplate.Type = DataTypeConverter.OPCUA2PIAF(aProp.DataType.DisplayName.First().Text);
-                
-                if (aProp.Value != null)
-                {
-                    var defaultValue = JsonConvert.DeserializeObject<JObject>(aProp.Value);
-                    var valueTypeId = defaultValue["Value"]["Type"].Value<int>();
-                    var opcType = nodeSetModels.First().Value.DataTypes.First(x => x.NodeId.Split("=").Last() == valueTypeId.ToString());
-                    var valueBody = defaultValue["Value"]["Body"].Value<string>();
-                    newAttributeTemplate.Value = new Value()
-                        {
-                            type = newAttributeTemplate.Type,
-                            Text = new string[] { valueBody }
-                        };
-                }
-
-                newAttributes.Add(newAttributeTemplate);
+                newAttributes.Add(getAfAttributeTemplate(aProp));
             }
 
             newTemplate.AFAttributeTemplate = newAttributes.ToArray();
