@@ -7,8 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazored.Modal" Version="6.0.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Blazored.Modal" Version="7.1.0" />
+    <PackageReference Include="CESMII.OpcUa.NodeSetImporter" Version="1.0.9" />
+    <PackageReference Include="CESMII.OpcUa.NodeSetModel" Version="1.0.9" />
+    <PackageReference Include="CESMII.OpcUa.NodeSetModel.Factory.Opc" Version="1.0.9" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -16,9 +19,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="ua.model.sdk">
-      <HintPath>..\..\UA-Model-SDK\ua.model.sdk\bin\Debug\net6.0\ua.model.sdk.dll</HintPath>
-    </Reference>
+    <None Update="NodeSets\opcfoundation.org.UA.DI.NodeSet2.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="NodeSets\opcfoundation.org.UA.NodeSet2.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="NodeSets\opcfoundation.org.UA.Robotics.NodeSet2.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="NodeSetCache\NodeSets\" />
   </ItemGroup>
 
 </Project>
