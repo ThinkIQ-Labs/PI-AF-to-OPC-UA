@@ -263,7 +263,7 @@
 
         if (aProp.EngineeringUnit != null)
         {
-            var stfu = 23;
+            newAttributeTemplate.DefaultUOM = aProp.EngineeringUnit.DisplayName.Text;
         }
 
         return newAttributeTemplate;
