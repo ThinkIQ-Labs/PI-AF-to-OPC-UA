@@ -8,10 +8,10 @@
 
   <ItemGroup>
     <PackageReference Include="Blazored.Modal" Version="7.1.0" />
-    <PackageReference Include="CESMII.OpcUa.NodeSetImporter" Version="1.0.9" />
-    <PackageReference Include="CESMII.OpcUa.NodeSetModel" Version="1.0.9" />
-    <PackageReference Include="CESMII.OpcUa.NodeSetModel.Factory.Opc" Version="1.0.9" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="CESMII.OpcUa.NodeSetImporter" Version="1.0.12" />
+    <PackageReference Include="CESMII.OpcUa.NodeSetModel" Version="1.0.12" />
+    <PackageReference Include="CESMII.OpcUa.NodeSetModel.Factory.Opc" Version="1.0.12" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>

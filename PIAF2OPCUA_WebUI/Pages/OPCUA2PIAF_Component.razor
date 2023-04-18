@@ -51,7 +51,7 @@
                     {
                         <div class="list-group">
                             <button class="list-group-item list-group-item-action @(activeUaUiType == null ? "" : (activeUaUiType==aUaUiType ? "active" : ""))"
-                                @onclick="() => SetActiveAfUiType(aUaUiType)">
+                                @onclick="() => SetActiveUaUiType(aUaUiType)">
                                 @aUaUiType.Name
                                 @if (aUaUiType.isSelected)
                                 {
@@ -228,7 +228,7 @@
 
     UaUiType? activeUaUiType { get; set; }
 
-    void SetActiveAfUiType(UaUiType aUaUiType)
+    void SetActiveUaUiType(UaUiType aUaUiType)
     {
         activeVariableModel = null;
         activeUaUiType = aUaUiType;
