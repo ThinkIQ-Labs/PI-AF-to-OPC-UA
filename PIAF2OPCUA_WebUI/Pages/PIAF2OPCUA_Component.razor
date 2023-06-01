@@ -253,10 +253,9 @@
                 {
                     DisplayName = new List<NodeModel.LocalizedText> { aAfUiType.AfType.Name },
                     BrowseName = aAfUiType.AfType.Name,
-                    SymbolicName = aAfUiType.AfType.Name,
                     SuperType = aAfUiType.AfBaseType == null ?
                                     uaBaseModel.ObjectTypes.FirstOrDefault(ot => ot.BrowseName.EndsWith("BaseObjectType")) :
-                                    nodeSetModel.ObjectTypes.First(x => x.SymbolicName == aAfUiType.AfBaseType.Name),
+                                    nodeSetModel.ObjectTypes.First(x => x.DisplayName.First().Text == aAfUiType.AfBaseType.Name),
                     NodeSet = nodeSetModel,
                     NodeId = new ExpandedNodeId(nextNodeId++, nodeSetModel.ModelUri).ToString(),
                     Description = new List<NodeModel.LocalizedText> { aAfUiType.AfType.Description == null ? "" : aAfUiType.AfType.Description },
@@ -304,7 +303,6 @@
                             NodeSet = nodeSetModel,
                             NodeId = new ExpandedNodeId(nextNodeId++, nodeSetModel.ModelUri).ToString(),
 
-                            SymbolicName = aAfTypeAttribute.Name,
                             BrowseName = aAfTypeAttribute.Name,
                             DisplayName = new List<NodeModel.LocalizedText> { aAfTypeAttribute.Name },
                             DataType = aDataType,
@@ -353,7 +351,6 @@
                             NodeSet = nodeSetModel,
                             NodeId = new ExpandedNodeId(nextNodeId++, nodeSetModel.ModelUri).ToString(),
 
-                            SymbolicName = aAfTypeAttribute.Name,
                             BrowseName = aAfTypeAttribute.Name,
                             DisplayName = new List<NodeModel.LocalizedText> { aAfTypeAttribute.Name },
                             DataType = aDataType,
