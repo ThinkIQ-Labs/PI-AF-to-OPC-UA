@@ -293,7 +293,9 @@
             // iterate through attributes
             foreach (var aAfTypeAttribute in aAfUiType.AfType.AFAttributeTemplate)
             {
-                if (aAfTypeAttribute.DefaultUOM != "" || aAfTypeAttribute.DataReference?.Value == "PiPoint")
+                if (aAfTypeAttribute.DefaultUOM == null) aAfTypeAttribute.DefaultUOM = "";
+
+                if (aAfTypeAttribute.DefaultUOM != "" || aAfTypeAttribute.DataReference?.Value == "PI Point")
                 {
                     // create variable designs for timeseries data
                     // and attributes that have a unit of measure

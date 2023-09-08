@@ -246,7 +246,14 @@
             var defaultValue = JsonConvert.DeserializeObject<JObject>(aProp.Value);
             var valueTypeId = defaultValue["Value"]["Type"].Value<int>();
             var opcType = nodeSetModels.First().Value.DataTypes.First(x => x.NodeId.Split("=").Last() == valueTypeId.ToString());
-            var valueBody = defaultValue["Value"]["Body"].Value<string>();
+            var valueBody = "";
+            try{
+                defaultValue["Value"]["Body"].Value<string>();
+            }
+            catch
+            {
+                defaultValue["Value"]["Body"].ToString();
+            }
             newAttributeTemplate.Value = new Value()
                 {
                     type = newAttributeTemplate.Type,
@@ -298,7 +305,7 @@
 
             newTemplate.AFAttributeTemplate = newAttributes.ToArray();
 
-            
+
             var items = afModel.Items == null ? new List<object>() : afModel.Items.ToList();
             items.Add(newTemplate);
             afModel.Items = items.ToArray();
@@ -517,20 +524,22 @@
 
     void AddUaUiType(ObjectTypeModel aObjectTypeModel)
     {
-        ObjectTypeModel aBaseUaType = aObjectTypeModel.SuperType as ObjectTypeModel;
-        var aBaseUaUiType = UaUiTypes.FirstOrDefault(x => x.UaType.DisplayName.FirstOrDefault().Text == aBaseUaType?.DisplayName.FirstOrDefault().Text);
-
-        UaUiType newType = new UaUiType(this);
-        newType.UaType = aObjectTypeModel;
-        newType.isSelected = false;
-        newType.BaseTypeString = aBaseUaType?.DisplayName.FirstOrDefault().Text;
-        newType.UaBaseType = aBaseUaType;
-        UaUiTypes.Add(newType);
-        if (aBaseUaType!=null && aBaseUaUiType == null)
+        if (UaUiTypes.Where(x => x.UaType.NodeId == aObjectTypeModel.NodeId).Count() == 0)
         {
-            AddUaUiType(aBaseUaType);
-        }
+            ObjectTypeModel aBaseUaType = aObjectTypeModel.SuperType as ObjectTypeModel;
+            var aBaseUaUiType = UaUiTypes.FirstOrDefault(x => x.UaType.DisplayName.FirstOrDefault().Text == aBaseUaType?.DisplayName.FirstOrDefault().Text);
 
+            UaUiType newType = new UaUiType(this);
+            newType.UaType = aObjectTypeModel;
+            newType.isSelected = false;
+            newType.BaseTypeString = aBaseUaType?.DisplayName.FirstOrDefault().Text;
+            newType.UaBaseType = aBaseUaType;
+            UaUiTypes.Add(newType);
+            if (aBaseUaType != null && aBaseUaUiType == null)
+            {
+                AddUaUiType(aBaseUaType);
+            }
+        }
     }
 
     //void ResolveBaseType(ObjectTypeModel aObjectTypeModel)
