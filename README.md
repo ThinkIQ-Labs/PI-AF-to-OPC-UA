@@ -1,6 +1,6 @@
 # Creating OPC UA Nodesets From Aveva PI Asset Framework Element Templates
 
-This project leverages XML interoperability standards to allow creation of OPC UA Information Models and Nodesets from Asset Framework (AF) Element Templates from AVEVA's PI System Explorer (PI AF). The reverse functionality, creation of PI AF Element Templates from OPC UA Information Models and Nodesets, is not yet supported, but planned.
+This project leverages XML interoperability standards to allow creation of OPC UA Information Models and Nodesets from Asset Framework (AF) Element Templates from AVEVA's PI System Explorer (PI AF). 
 
 A program was created with a user interface to import and browse AF templates.
 
