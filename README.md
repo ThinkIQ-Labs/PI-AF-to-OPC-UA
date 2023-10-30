@@ -7,7 +7,7 @@ A program was created with a user interface to import and browse AF templates.
 ![Screenshot](./images/af2ua_screenshot.png)
 <p align = "center"><b>Fig.1 - Screenshot of program UI: PI AF -> OPC UA</b></p>
 
-The first step is to create a new UA Nodeset Model by entering a domain and name. The program automatically references the standard OPC UA namespace. 
+The first step in the process is to create a new UA Nodeset Model by entering a domain and name. The program automatically references the standard OPC UA namespace. 
 
 Once a nodeset model is created, element templates can be added by using the "+" icons next to the element template names. Element templates can be removed from the model design the same way. Note, that if a template is based on another base template, that base template needs to be added to the OPC UA nodeset model first. At any time, one can preview and save the generated Nodeset xml file. 
 
