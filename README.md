@@ -22,7 +22,7 @@ Even though element instances can be nested, element templates cannot be nested 
 
 ## OPC UA Information Model Assumptions
 
-Objects can be added into a newly created namespace. At this time, appending or editing of existing Information Models or Nodesets is not supported. The workflow builds an OPC UA nodeset model using the [Cesmii OPC UA Nodeset Utilities C# SDK](https://github.com/cesmii/CESMII-NodeSet-Utilities).
+Objects can be added into a newly created namespace. At this time, appending or editing of existing Information Models or Nodesets is not supported. The workflow builds an OPC UA nodeset model using the [CESMII OPC UA Nodeset Utilities C# SDK](https://github.com/cesmii/CESMII-NodeSet-Utilities).
 
 The following basic features of the OPC UA namespace are used to capture AF Element Templates:
 
